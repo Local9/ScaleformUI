@@ -2,7 +2,6 @@
 using ScaleformUI.LobbyMenu;
 using ScaleformUI.PauseMenu;
 using ScaleformUI.PauseMenus.Elements.Items;
-using static CitizenFX.Core.Native.API;
 
 namespace ScaleformUI.PauseMenus.Elements.Panels
 {
@@ -69,8 +68,8 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
                     localCoronaMapStage = -1;
                     if (turnedOn)
                     {
-                        DisplayRadar(false);
-                        SetMapFullScreen(false);
+                        Parent.Natives.DisplayRadar(false);
+                        Parent.Natives.SetMapFullScreen(false);
                         turnedOn = false;
                     }
                 }
@@ -137,7 +136,7 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
                 zoomDistance = DistanceY / 1.5f;
 
             RefreshMapPosition(mapPosition);
-            LockMinimapAngle(0);
+            Parent.Natives.LockMinimapAngle(0);
         }
 
         public void RefreshMapPosition(Vector2 position)
@@ -162,11 +161,11 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
         {
             foreach (FakeBlip blip in MinimapBlips)
             {
-                RaceGalleryNextBlipSprite(blip.Sprite);
-                int b = RaceGalleryAddBlip(blip.Position.X, blip.Position.Y, blip.Position.Z);
+                Parent.Natives.RaceGalleryNextBlipSprite(blip.Sprite);
+                int b = Parent.Natives.RaceGalleryAddBlip(blip.Position.X, blip.Position.Y, blip.Position.Z);
                 if (blip.Scale > 0)
-                    SetBlipScale(b, blip.Scale);
-                SetBlipColour(b, (int)blip.Color);
+                    Parent.Natives.SetBlipScale(b, blip.Scale);
+                Parent.Natives.SetBlipColour(b, (int)blip.Color);
             }
         }
 
@@ -188,8 +187,8 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
             {
                 if (!turnedOn)
                 {
-                    DisplayRadar(true);
-                    SetMapFullScreen(true);
+                    Parent.Natives.DisplayRadar(true);
+                    Parent.Natives.SetMapFullScreen(true);
                     turnedOn = true;
                 }
             }
@@ -197,23 +196,23 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
             {
                 if (turnedOn)
                 {
-                    DisplayRadar(false);
-                    SetMapFullScreen(false);
+                    Parent.Natives.DisplayRadar(false);
+                    Parent.Natives.SetMapFullScreen(false);
                     turnedOn = false;
                     Dispose();
                 }
             }
-            SetPlayerBlipPositionThisFrame(-5000, -5000);
+            Parent.Natives.SetPlayerBlipPositionThisFrame(-5000, -5000);
             RefreshZoom();
         }
 
         internal void InitializeMapDisplay()
         {
-            DeleteWaypoint();
-            SetWaypointOff();
-            ClearGpsCustomRoute();
-            ClearGpsMultiRoute();
-            SetPoliceRadarBlips(false);
+            Parent.Natives.DeleteWaypoint();
+            Parent.Natives.SetWaypointOff();
+            Parent.Natives.ClearGpsCustomRoute();
+            Parent.Natives.ClearGpsMultiRoute();
+            Parent.Natives.SetPoliceRadarBlips(false);
 
             MinimapRoute.SetupCustomRoute();
             SetupBlips();
@@ -236,27 +235,27 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
         internal void RefreshZoom()
         {
             if (zoomDistance != 0)
-                SetRadarZoomToDistance(zoomDistance);
-            LockMinimapPosition(mapPosition.X, mapPosition.Y);
+                Parent.Natives.SetRadarZoomToDistance(zoomDistance);
+            Parent.Natives.LockMinimapPosition(mapPosition.X, mapPosition.Y);
         }
 
         internal void Dispose()
         {
             localCoronaMapStage = 0;
             enabled = false;
-            N_0x2de6c5e2e996f178(1);
-            DisplayRadar(false);
-            RaceGalleryFullscreen(false);
-            ClearRaceGalleryBlips();
+            Parent.Natives.PauseToggleFullscreenMap(true);
+            Parent.Natives.DisplayRadar(false);
+            Parent.Natives.RaceGalleryFullscreen(false);
+            Parent.Natives.ClearRaceGalleryBlips();
             zoomDistance = 0;
-            SetRadarZoom(0);
-            SetGpsCustomRouteRender(false, 18, 30);
-            SetGpsMultiRouteRender(false);
-            UnlockMinimapPosition();
-            UnlockMinimapAngle();
-            DeleteWaypoint();
-            ClearGpsCustomRoute();
-            ClearGpsFlags();
+            Parent.Natives.SetRadarZoom(0);
+            Parent.Natives.SetGpsCustomRouteRender(false, 18, 30);
+            Parent.Natives.SetGpsMultiRouteRender(false);
+            Parent.Natives.UnlockMinimapPosition();
+            Parent.Natives.UnlockMinimapAngle();
+            Parent.Natives.DeleteWaypoint();
+            Parent.Natives.ClearGpsCustomRoute();
+            Parent.Natives.ClearGpsFlags();
             MinimapBlips.Clear();
             MinimapRoute = new MinimapRoute();
         }
@@ -267,12 +266,12 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
             MinimapRoute = new MinimapRoute();
             localCoronaMapStage = 0;
             zoomDistance = 0;
-            ClearRaceGalleryBlips();
-            SetRadarZoom(0);
-            SetGpsCustomRouteRender(false, 18, 30);
-            DeleteWaypoint();
-            ClearGpsCustomRoute();
-            ClearGpsFlags();
+            Parent.Natives.ClearRaceGalleryBlips();
+            Parent.Natives.SetRadarZoom(0);
+            Parent.Natives.SetGpsCustomRouteRender(false, 18, 30);
+            Parent.Natives.DeleteWaypoint();
+            Parent.Natives.ClearGpsCustomRoute();
+            Parent.Natives.ClearGpsFlags();
         }
     }
 }

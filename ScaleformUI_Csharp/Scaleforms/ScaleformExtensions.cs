@@ -2,17 +2,22 @@
 using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
 using ScaleformUI.Elements;
+using ScaleformUI.Scaleforms.ScaleformUI.Interfaces;
 using System.Drawing;
 
 namespace ScaleformUI.Scaleforms
 {
     public class ScaleformWideScreen : INativeValue, IDisposable
     {
+        private readonly IRageNatives _scaleform;
+
         public ScaleformWideScreen(string scaleformID)
         {
-            _handle = API.RequestScaleformMovieInstance(scaleformID);
+            _scaleform = Main.GetNativesHandler();
+            _handle = _scaleform.RequestScaleformMovieInstance(scaleformID);
         }
 
+        // no references to this method, any need?
         ~ScaleformWideScreen()
         {
             Dispose();
@@ -22,7 +27,7 @@ namespace ScaleformUI.Scaleforms
         {
             if (IsLoaded)
             {
-                API.SetScaleformMovieAsNoLongerNeeded(ref _handle);
+                _scaleform.SetScaleformMovieAsNoLongerNeeded(ref _handle);
             }
 
             GC.SuppressFinalize(this);
@@ -59,110 +64,110 @@ namespace ScaleformUI.Scaleforms
         {
             get
             {
-                return API.HasScaleformMovieLoaded(Handle);
+                return _scaleform.HasScaleformMovieLoaded(Handle);
             }
         }
 
         public void CallFunction(string function, params object[] arguments)
         {
-            API.BeginScaleformMovieMethod(Handle, function);
+            _scaleform.BeginScaleformMovieMethod(Handle, function);
             foreach (object argument in arguments)
             {
                 switch (argument)
                 {
                     case int argInt:
-                        API.PushScaleformMovieMethodParameterInt(argInt);
+                        _scaleform.PushScaleformMovieMethodParameterInt(argInt);
                         break;
                     case string:
                     case char:
                         if (argument.ToString().StartsWith("b_") || argument.ToString().StartsWith("t_"))
-                            API.ScaleformMovieMethodAddParamPlayerNameString(argument.ToString());
+                            _scaleform.ScaleformMovieMethodAddParamPlayerNameString(argument.ToString());
                         else
-                            API.PushScaleformMovieMethodParameterString(argument.ToString());
+                            _scaleform.PushScaleformMovieMethodParameterString(argument.ToString());
                         break;
                     case double:
                     case float:
-                        API.PushScaleformMovieMethodParameterFloat((float)argument);
+                        _scaleform.PushScaleformMovieMethodParameterFloat((float)argument);
                         break;
                     case bool argBool:
-                        API.PushScaleformMovieMethodParameterBool(argBool);
+                        _scaleform.PushScaleformMovieMethodParameterBool(argBool);
                         break;
                     case ScaleformLabel argLabel:
-                        API.BeginTextCommandScaleformString(argLabel.Label);
-                        API.EndTextCommandScaleformString();
+                        _scaleform.BeginTextCommandScaleformString(argLabel.Label);
+                        _scaleform.EndTextCommandScaleformString();
                         break;
                     case ScaleformLiteralString argLiteral:
-                        API.ScaleformMovieMethodAddParamTextureNameString_2(argLiteral.LiteralString);
+                        _scaleform.ScaleformMovieMethodAddParamTextureNameString_2(argLiteral.LiteralString);
                         break;
                     case SColor color:
                         if (color == default)
-                            API.PushScaleformMovieMethodParameterInt(SColor.HUD_None.ArgbValue);
+                            _scaleform.PushScaleformMovieMethodParameterInt(SColor.HUD_None.ArgbValue);
                         else
-                            API.PushScaleformMovieMethodParameterInt(color.ArgbValue);
+                            _scaleform.PushScaleformMovieMethodParameterInt(color.ArgbValue);
                         break;
                     default:
                         throw new ArgumentException(string.Format("Unknown argument type '{0}' passed to scaleform with handle {1}...", argument.GetType().Name, Handle), "arguments");
                 }
             }
-            API.EndScaleformMovieMethod();
+            _scaleform.EndScaleformMovieMethod();
         }
 
         private int CallFunctionReturnInternal(string function, params object[] arguments)
         {
-            API.BeginScaleformMovieMethod(Handle, function);
+            _scaleform.BeginScaleformMovieMethod(Handle, function);
             foreach (object argument in arguments)
             {
                 switch (argument)
                 {
                     case int argInt:
-                        API.PushScaleformMovieMethodParameterInt(argInt);
+                        _scaleform.PushScaleformMovieMethodParameterInt(argInt);
                         break;
                     case string:
                     case char:
-                        API.PushScaleformMovieMethodParameterString(argument.ToString());
+                        _scaleform.PushScaleformMovieMethodParameterString(argument.ToString());
                         break;
                     case double:
                     case float:
-                        API.PushScaleformMovieMethodParameterFloat((float)argument);
+                        _scaleform.PushScaleformMovieMethodParameterFloat((float)argument);
                         break;
                     case bool argBool:
-                        API.PushScaleformMovieMethodParameterBool(argBool);
+                        _scaleform.PushScaleformMovieMethodParameterBool(argBool);
                         break;
                     case ScaleformLabel argLabel:
-                        API.BeginTextCommandScaleformString(argLabel.Label);
-                        API.EndTextCommandScaleformString();
+                        _scaleform.BeginTextCommandScaleformString(argLabel.Label);
+                        _scaleform.EndTextCommandScaleformString();
                         break;
                     case ScaleformLiteralString argLiteral:
-                        API.ScaleformMovieMethodAddParamTextureNameString_2(argLiteral.LiteralString);
+                        _scaleform.ScaleformMovieMethodAddParamTextureNameString_2(argLiteral.LiteralString);
                         break;
                     default:
                         throw new ArgumentException(string.Format("Unknown argument type '{0}' passed to scaleform with handle {1}...", argument.GetType().Name, Handle), "arguments");
                 }
             }
-            return API.EndScaleformMovieMethodReturnValue();
+            return _scaleform.EndScaleformMovieMethodReturnValue();
         }
         public async Task<int> CallFunctionReturnValueInt(string function, params object[] arguments)
         {
             int ret = CallFunctionReturnInternal(function, arguments);
-            while (!API.IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-            return API.GetScaleformMovieFunctionReturnInt(ret);
+            while (!_scaleform.IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+            return _scaleform.GetScaleformMovieFunctionReturnInt(ret);
         }
         public async Task<bool> CallFunctionReturnValueBool(string function, params object[] arguments)
         {
             int ret = CallFunctionReturnInternal(function, arguments);
-            while (!API.IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-            return API.GetScaleformMovieMethodReturnValueBool(ret);
+            while (!_scaleform.IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+            return _scaleform.GetScaleformMovieMethodReturnValueBool(ret);
         }
         public async Task<string> CallFunctionReturnValueString(string function, params object[] arguments)
         {
             int ret = CallFunctionReturnInternal(function, arguments);
-            while (!API.IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-            return API.GetScaleformMovieFunctionReturnString(ret);
+            while (!_scaleform.IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+            return _scaleform.GetScaleformMovieFunctionReturnString(ret);
         }
 
         public void Render2D()
         {
-            API.DrawScaleformMovieFullscreen(Handle, 255, 255, 255, 255, 0);
+            _scaleform.DrawScaleformMovieFullscreen(Handle, 255, 255, 255, 255, 0);
         }
         public void Render2DScreenSpace(PointF location, PointF size)
         {
@@ -171,15 +176,15 @@ namespace ScaleformUI.Scaleforms
             float width = size.X / Screen.Width;
             float height = size.Y / Screen.Height;
 
-            API.DrawScaleformMovie(Handle, x + (width / 2.0f), y + (height / 2.0f), width, height, 255, 255, 255, 255, 0);
+            _scaleform.DrawScaleformMovie(Handle, x + (width / 2.0f), y + (height / 2.0f), width, height, 255, 255, 255, 255, 0);
         }
         public void Render3D(Vector3 position, Vector3 rotation, Vector3 scale)
         {
-            API.DrawScaleformMovie_3dNonAdditive(Handle, position.X, position.Y, position.Z, rotation.X, rotation.Y, rotation.Z, 2.0f, 2.0f, 1.0f, scale.X, scale.Y, scale.Z, 2);
+            _scaleform.DrawScaleformMovie_3dNonAdditive(Handle, position.X, position.Y, position.Z, rotation.X, rotation.Y, rotation.Z, 2.0f, 2.0f, 1.0f, scale.X, scale.Y, scale.Z, 2);
         }
         public void Render3DAdditive(Vector3 position, Vector3 rotation, Vector3 scale)
         {
-            API.DrawScaleformMovie_3d(Handle, position.X, position.Y, position.Z, rotation.X, rotation.Y, rotation.Z, 2.0f, 2.0f, 1.0f, scale.X, scale.Y, scale.Z, 2);
+            _scaleform.DrawScaleformMovie_3d(Handle, position.X, position.Y, position.Z, rotation.X, rotation.Y, rotation.Z, 2.0f, 2.0f, 1.0f, scale.X, scale.Y, scale.Z, 2);
         }
     }
 

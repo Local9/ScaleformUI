@@ -1,12 +1,14 @@
 ﻿using CitizenFX.Core;
 using ScaleformUI.Elements;
 using ScaleformUI.Menu;
-using static CitizenFX.Core.Native.API;
+using ScaleformUI.Scaleforms.ScaleformUI.Interfaces;
 
 namespace ScaleformUI.Scaleforms
 {
     public class PauseMenuScaleform
     {
+        private readonly IRageNatives _natives;
+
         public ScaleformWideScreen _header;
         public ScaleformWideScreen _pause;
         public ScaleformWideScreen _lobby;
@@ -18,6 +20,7 @@ namespace ScaleformUI.Scaleforms
 
         public PauseMenuScaleform()
         {
+            _natives = Main.GetNativesHandler();
         }
 
         public void Load()
@@ -111,15 +114,15 @@ namespace ScaleformUI.Scaleforms
 
         public void AddRightListLabel(int leftItem, string label, string fontName, int fontId)
         {
-            AddTextEntry($"PauseMenu_{leftItem}", label);
-            BeginScaleformMovieMethod(_pause.Handle, "ADD_RIGHT_LIST_ITEM");
-            ScaleformMovieMethodAddParamInt(leftItem);
-            ScaleformMovieMethodAddParamInt(0);
-            BeginTextCommandScaleformString($"PauseMenu_{leftItem}");
-            EndTextCommandScaleformString_2();
-            ScaleformMovieMethodAddParamPlayerNameString(fontName);
-            ScaleformMovieMethodAddParamInt(fontId);
-            EndScaleformMovieMethod();
+            _natives.AddTextEntry($"PauseMenu_{leftItem}", label);
+            _natives.BeginScaleformMovieMethod(_pause.Handle, "ADD_RIGHT_LIST_ITEM");
+            _natives.ScaleformMovieMethodAddParamInt(leftItem);
+            _natives.ScaleformMovieMethodAddParamInt(0);
+            _natives.BeginTextCommandScaleformString($"PauseMenu_{leftItem}");
+            _natives.EndTextCommandScaleformString_2();
+            _natives.ScaleformMovieMethodAddParamPlayerNameString(fontName);
+            _natives.ScaleformMovieMethodAddParamInt(fontId);
+            _natives.EndScaleformMovieMethod();
         }
 
         public void AddRightStatItemLabel(int leftItem, string label, string rightLabel, ItemFont labelFont, ItemFont rLabelFont)
@@ -167,30 +170,30 @@ namespace ScaleformUI.Scaleforms
         }
         public void AddKeymapItem(int leftItem, string label, string control1, string control2)
         {
-            BeginScaleformMovieMethod(_pause.Handle, "ADD_RIGHT_LIST_ITEM");
-            ScaleformMovieMethodAddParamInt(leftItem);
-            ScaleformMovieMethodAddParamInt(3);
-            PushScaleformMovieFunctionParameterString(label);
-            BeginTextCommandScaleformString("string");
-            AddTextComponentScaleform(control1);
-            EndTextCommandScaleformString_2();
-            BeginTextCommandScaleformString("string");
-            AddTextComponentScaleform(control2);
-            EndTextCommandScaleformString_2();
-            EndScaleformMovieMethod();
+            _natives.BeginScaleformMovieMethod(_pause.Handle, "ADD_RIGHT_LIST_ITEM");
+            _natives.ScaleformMovieMethodAddParamInt(leftItem);
+            _natives.ScaleformMovieMethodAddParamInt(3);
+            _natives.PushScaleformMovieFunctionParameterString(label);
+            _natives.BeginTextCommandScaleformString("string");
+            _natives.AddTextComponentScaleform(control1);
+            _natives.EndTextCommandScaleformString_2();
+            _natives.BeginTextCommandScaleformString("string");
+            _natives.AddTextComponentScaleform(control2);
+            _natives.EndTextCommandScaleformString_2();
+            _natives.EndScaleformMovieMethod();
         }
         public void UpdateKeymap(int leftItem, int rightItem, string control1, string control2)
         {
-            BeginScaleformMovieMethod(_pause.Handle, "UPDATE_KEYMAP_ITEM");
-            ScaleformMovieMethodAddParamInt(leftItem);
-            ScaleformMovieMethodAddParamInt(rightItem);
-            BeginTextCommandScaleformString("string");
-            AddTextComponentScaleform(control1);
-            EndTextCommandScaleformString_2();
-            BeginTextCommandScaleformString("string");
-            AddTextComponentScaleform(control2);
-            EndTextCommandScaleformString_2();
-            EndScaleformMovieMethod();
+            _natives.BeginScaleformMovieMethod(_pause.Handle, "UPDATE_KEYMAP_ITEM");
+            _natives.ScaleformMovieMethodAddParamInt(leftItem);
+            _natives.ScaleformMovieMethodAddParamInt(rightItem);
+            _natives.BeginTextCommandScaleformString("string");
+            _natives.AddTextComponentScaleform(control1);
+            _natives.EndTextCommandScaleformString_2();
+            _natives.BeginTextCommandScaleformString("string");
+            _natives.AddTextComponentScaleform(control2);
+            _natives.EndTextCommandScaleformString_2();
+            _natives.EndScaleformMovieMethod();
         }
 
         public void SetRightSettingsItemBool(int leftItem, int rightItem, bool value)
@@ -229,11 +232,11 @@ namespace ScaleformUI.Scaleforms
         }
         public async Task<string> SendInputEvent(int direction)
         {
-            BeginScaleformMovieMethod(_pause.Handle, "SET_INPUT_EVENT");
-            ScaleformMovieMethodAddParamInt(direction);
-            int ret = EndScaleformMovieMethodReturnValue();
-            while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-            string res = GetScaleformMovieFunctionReturnString(ret);
+            _natives.BeginScaleformMovieMethod(_pause.Handle, "SET_INPUT_EVENT");
+            _natives.ScaleformMovieMethodAddParamInt(direction);
+            int ret = _natives.EndScaleformMovieMethodReturnValue();
+            while (!_natives.IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+            string res = _natives.GetScaleformMovieFunctionReturnString(ret);
             return res;
         }
 
@@ -243,10 +246,10 @@ namespace ScaleformUI.Scaleforms
         }
         public async Task<string> SendClickEvent()
         {
-            BeginScaleformMovieMethod(_pause.Handle, "MOUSE_CLICK_EVENT");
-            int ret = EndScaleformMovieMethodReturnValue();
-            while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-            string res = GetScaleformMovieFunctionReturnString(ret);
+            _natives.BeginScaleformMovieMethod(_pause.Handle, "MOUSE_CLICK_EVENT");
+            int ret = _natives.EndScaleformMovieMethodReturnValue();
+            while (!_natives.IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+            string res = _natives.GetScaleformMovieFunctionReturnString(ret);
             return res;
         }
 
@@ -267,9 +270,9 @@ namespace ScaleformUI.Scaleforms
         {
             if (_visible)
             {
-                if (IsFrontendReadyForControl())
+                if (_natives.IsFrontendReadyForControl())
                 {
-                    SetScriptGfxDrawBehindPausemenu(true);
+                    _natives.SetScriptGfxDrawBehindPausemenu(true);
                     if (firstTick)
                     {
                         FadeInMenus();
@@ -277,11 +280,11 @@ namespace ScaleformUI.Scaleforms
                     }
                     if (BGEnabled)
                         _pauseBG.Render2D();
-                    DrawScaleformMovie(_header.Handle, 0.501f, 0.162f, 0.6782f, 0.145f, 255, 255, 255, 255, 0);
+                    _natives.DrawScaleformMovie(_header.Handle, 0.501f, 0.162f, 0.6782f, 0.145f, 255, 255, 255, 255, 0);
                     if (!isLobby)
-                        DrawScaleformMovie(_pause.Handle, 0.6617187f, 0.7226667f, 1, 1, 255, 255, 255, 255, 0);
+                        _natives.DrawScaleformMovie(_pause.Handle, 0.6617187f, 0.7226667f, 1, 1, 255, 255, 255, 255, 0);
                     else
-                        DrawScaleformMovie(_lobby.Handle, 0.6617187f, 0.7226667f, 1, 1, 255, 255, 255, 255, 0);
+                        _natives.DrawScaleformMovie(_lobby.Handle, 0.6617187f, 0.7226667f, 1, 1, 255, 255, 255, 255, 0);
                 }
             }
         }

@@ -1,5 +1,4 @@
 ﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
 using ScaleformUI.Elements;
 using ScaleformUI.LobbyMenu;
 using ScaleformUI.Menu;
@@ -127,7 +126,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
         {
             try
             {
-                API.ClearPedInPauseMenu();
+                Natives.ClearPedInPauseMenu();
                 Items[CurrentSelection].Selected = false;
                 bool overflow = CurrentSelection == 0 && Pagination.TotalPages > 1;
                 if (Pagination.GoUp())
@@ -183,7 +182,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
         {
             try
             {
-                API.ClearPedInPauseMenu();
+                Natives.ClearPedInPauseMenu();
                 Items[CurrentSelection].Selected = false;
                 bool overflow = CurrentSelection == Items.Count - 1 && Pagination.TotalPages > 1;
                 if (Pagination.GoDown())
@@ -241,7 +240,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             set
             {
                 if (value == CurrentSelection) return;
-                API.ClearPedInPauseMenu();
+                Natives.ClearPedInPauseMenu();
                 if (value < 0)
                 {
                     Pagination.CurrentMenuIndex = 0;

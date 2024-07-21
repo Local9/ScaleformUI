@@ -1,5 +1,4 @@
-﻿using CitizenFX.Core.Native;
-using ScaleformUI.Elements;
+﻿using ScaleformUI.Elements;
 using ScaleformUI.PauseMenus.Elements;
 using ScaleformUI.PauseMenus.Elements.Columns;
 using ScaleformUI.PauseMenus.Elements.Panels;
@@ -67,7 +66,7 @@ namespace ScaleformUI.PauseMenu
             if (listCol[f].Type != "players")
             {
                 if (PlayersColumn != null && PlayersColumn.Items.Count > 0 && !PlayersColumn.Items[PlayersColumn.CurrentSelection].KeepPanelVisible)
-                    API.ClearPedInPauseMenu();
+                    Natives.ClearPedInPauseMenu();
             }
             focus = f;
             if (listCol[focus].Type == "panel")

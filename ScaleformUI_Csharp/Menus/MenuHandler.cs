@@ -1,10 +1,10 @@
 ﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
 using ScaleformUI.Menu;
 using ScaleformUI.Menus;
 using ScaleformUI.PauseMenus;
 using ScaleformUI.Radial;
 using ScaleformUI.Radio;
+using ScaleformUI.Scaleforms.ScaleformUI.Interfaces;
 
 namespace ScaleformUI
 {
@@ -15,6 +15,8 @@ namespace ScaleformUI
     /// </summary>
     public static class MenuHandler
     {
+        private static IRageNatives _natives => Main.GetNativesHandler();
+
         internal static MenuBase currentMenu;
         internal static PauseMenuBase currentBase;
         internal static bool ableToDraw;
@@ -23,7 +25,7 @@ namespace ScaleformUI
         {
             get
             {
-                int handle = API.PlayerPedId();
+                int handle = _natives.PlayerPedId();
 
                 if (_ped is null || handle != _ped.Handle)
                 {

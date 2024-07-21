@@ -1,12 +1,13 @@
 ﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
 using ScaleformUI.Elements;
+using ScaleformUI.Scaleforms.ScaleformUI.Interfaces;
 
 namespace ScaleformUI.Menu
 {
     public enum ColorPanelType { Hair, Makeup }
     public class UIMenuColorPanel : UIMenuPanel
     {
+        private readonly IRageNatives _natives;
         public string Title { get; set; }
         public ColorPanelType ColorPanelColorType { get; set; }
         public List<SColor> CustomColors { get; private set; }
@@ -39,6 +40,12 @@ namespace ScaleformUI.Menu
                 _setValue(_value);
             }
         }
+
+        private UIMenuColorPanel()
+        {
+            _natives = Main.GetNativesHandler();
+        }
+
         public UIMenuColorPanel(string title, ColorPanelType ColorType, int startIndex = 0)
         {
             Title = title ?? "Color Panel";
@@ -73,12 +80,12 @@ namespace ScaleformUI.Menu
         {
             int it = this.ParentItem.Parent.Pagination.GetScaleformIndex(this.ParentItem.Parent.MenuItems.IndexOf(this.ParentItem));
             int van = this.ParentItem.Panels.IndexOf(this);
-            API.BeginScaleformMovieMethod(Main.scaleformUI.Handle, "GET_VALUE_FROM_PANEL");
-            API.ScaleformMovieMethodAddParamInt(it);
-            API.ScaleformMovieMethodAddParamInt(van);
-            int ret = API.EndScaleformMovieMethodReturnValue();
-            while (!API.IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-            _value = API.GetScaleformMovieMethodReturnValueInt(ret);
+            _natives.BeginScaleformMovieMethod(Main.scaleformUI.Handle, "GET_VALUE_FROM_PANEL");
+            _natives.ScaleformMovieMethodAddParamInt(it);
+            _natives.ScaleformMovieMethodAddParamInt(van);
+            int ret = _natives.EndScaleformMovieMethodReturnValue();
+            while (!_natives.IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+            _value = _natives.GetScaleformMovieMethodReturnValueInt(ret);
         }
 
         public void _setValue(int val)

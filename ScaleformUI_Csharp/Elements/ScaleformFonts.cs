@@ -1,4 +1,4 @@
-﻿using CitizenFX.Core.Native;
+﻿using ScaleformUI.Scaleforms.ScaleformUI.Interfaces;
 
 namespace ScaleformUI.Elements
 {
@@ -47,6 +47,8 @@ namespace ScaleformUI.Elements
 
     public class ItemFont
     {
+        private static readonly IRageNatives _natives = Main.GetNativesHandler();
+
         public string FontName;
         public int FontID = 0;
         internal ItemFont(string fontName)
@@ -67,8 +69,8 @@ namespace ScaleformUI.Elements
         public static ItemFont RegisterFont(string gfxName, string fontName)
         {
             ItemFont ret = new ItemFont(fontName);
-            API.RegisterFontFile(gfxName);
-            ret.FontID = API.RegisterFontId(fontName);
+            _natives.RegisterFontFile(gfxName);
+            ret.FontID = _natives.RegisterFontId(fontName);
             return ret;
         }
     }

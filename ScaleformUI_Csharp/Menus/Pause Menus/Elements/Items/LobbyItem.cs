@@ -1,14 +1,16 @@
 ﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
 using ScaleformUI.LobbyMenu;
 using ScaleformUI.PauseMenu;
 using ScaleformUI.PauseMenus.Elements.Columns;
 using ScaleformUI.PauseMenus.Elements.Panels;
+using ScaleformUI.Scaleforms.ScaleformUI.Interfaces;
 
 namespace ScaleformUI.PauseMenus.Elements.Items
 {
     public class LobbyItem
     {
+        private readonly IRageNatives _natives;
+
         internal int _type;
         private bool _enabled = true;
         private bool _selected;
@@ -18,6 +20,11 @@ namespace ScaleformUI.PauseMenus.Elements.Items
         private bool _clonePedAsleep = true;
         private bool _clonePedLighting = false;
         private bool keepPanelVisible;
+
+        public LobbyItem()
+        {
+            _natives = Main.GetNativesHandler();
+        }
 
         /// <summary>
         /// Whether this item is currently selected.
@@ -79,7 +86,7 @@ namespace ScaleformUI.PauseMenus.Elements.Items
                 if (clonePed != null)
                     CreateClonedPed();
                 else
-                    API.ClearPedInPauseMenu();
+                    _natives.ClearPedInPauseMenu();
             }
         }
 
@@ -91,7 +98,7 @@ namespace ScaleformUI.PauseMenus.Elements.Items
                 _clonePedAsleep = value;
                 // Don't ask me why its in reverse, it just is.
                 // They should have called it SetPauseMenuPedAwakeState
-                API.SetPauseMenuPedSleepState(!_clonePedAsleep);
+                _natives.SetPauseMenuPedSleepState(!_clonePedAsleep);
             }
         }
 
@@ -101,7 +108,7 @@ namespace ScaleformUI.PauseMenus.Elements.Items
             set
             {
                 _clonePedLighting = value;
-                API.SetPauseMenuPedLighting(_clonePedLighting);
+                _natives.SetPauseMenuPedLighting(_clonePedLighting);
             }
         }
 
@@ -168,20 +175,20 @@ namespace ScaleformUI.PauseMenus.Elements.Items
             }
 
             // clone the ped we cached away for the pause menu
-            _clonePed = new Ped(API.ClonePed(ClonePed.Handle, 0, true, true));
+            _clonePed = new Ped(_natives.ClonePed(ClonePed.Handle, 0, true, true));
             await BaseScript.Delay(1);
             HidePed(_clonePed);
-            API.GivePedToPauseMenu(_clonePed.Handle, 2);
-            API.SetPauseMenuPedSleepState(!_clonePedAsleep);
+            _natives.GivePedToPauseMenu(_clonePed.Handle, 2);
+            _natives.SetPauseMenuPedSleepState(!_clonePedAsleep);
             if (ParentColumn != null && ParentColumn.Parent != null && ParentColumn.Parent.Visible)
             {
                 if (ParentColumn.Parent is MainView lobby)
                 {
-                    API.SetPauseMenuPedLighting(_clonePedLighting);
+                    _natives.SetPauseMenuPedLighting(_clonePedLighting);
                 }
                 else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
                 {
-                    API.SetPauseMenuPedLighting(_clonePedLighting && pause.FocusLevel > 0);
+                    _natives.SetPauseMenuPedLighting(_clonePedLighting && pause.FocusLevel > 0);
                 }
             }
         }

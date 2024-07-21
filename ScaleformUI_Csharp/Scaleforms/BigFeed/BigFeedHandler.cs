@@ -1,10 +1,12 @@
 ﻿using CitizenFX.Core;
-using static CitizenFX.Core.Native.API;
+using ScaleformUI.Scaleforms.ScaleformUI.Interfaces;
 
 namespace ScaleformUI.Scaleforms
 {
     public class BigFeedHandler
     {
+        private readonly IRageNatives _natives;
+
         internal ScaleformWideScreen _sc;
         private bool enabled;
         private string title = "";
@@ -91,7 +93,7 @@ namespace ScaleformUI.Scaleforms
                     _sc.CallFunction("HIDE_ONLINE_LOGO");
                     _sc.CallFunction("FADE_IN_BIGFEED");
                     if (DisabledNotifications)
-                        ThefeedCommentTeleportPoolOn();
+                        _natives.ThefeedCommentTeleportPoolOn();
                     UpdateInfo();
                 }
                 else
@@ -99,12 +101,16 @@ namespace ScaleformUI.Scaleforms
                     _sc.CallFunction("END_BIGFEED");
                     //_sc.CallFunction("END_BIGFEED");
                     if (DisabledNotifications)
-                        ThefeedCommentTeleportPoolOff();
+                        _natives.ThefeedCommentTeleportPoolOff();
                 }
             }
         }
 
-        public BigFeedHandler() { Load(); }
+        public BigFeedHandler()
+        {
+            _natives = Main.GetNativesHandler();
+            Load();
+        }
 
         private async void Load()
         {
@@ -132,19 +138,19 @@ namespace ScaleformUI.Scaleforms
         private void UpdateInfo()
         {
             if (!enabled) return;
-            AddTextEntry("scaleform_ui_bigFeed", bodyText);
-            BeginScaleformMovieMethod(_sc.Handle, "SET_BIGFEED_INFO");
-            PushScaleformMovieFunctionParameterString(string.Empty);
-            BeginTextCommandScaleformString("scaleform_ui_bigFeed");
-            EndTextCommandScaleformString_2();
-            PushScaleformMovieFunctionParameterInt(0);
-            PushScaleformMovieFunctionParameterString(textureDictionary);
-            PushScaleformMovieFunctionParameterString(textureName);
-            PushScaleformMovieFunctionParameterString(subtitle);
-            PushScaleformMovieFunctionParameterString(string.Empty);
-            PushScaleformMovieFunctionParameterString(title);
-            PushScaleformMovieFunctionParameterInt(0);
-            EndScaleformMovieMethod();
+            _natives.AddTextEntry("scaleform_ui_bigFeed", bodyText);
+            _natives.BeginScaleformMovieMethod(_sc.Handle, "SET_BIGFEED_INFO");
+            _natives.PushScaleformMovieFunctionParameterString(string.Empty);
+            _natives.BeginTextCommandScaleformString("scaleform_ui_bigFeed");
+            _natives.EndTextCommandScaleformString_2();
+            _natives.PushScaleformMovieFunctionParameterInt(0);
+            _natives.PushScaleformMovieFunctionParameterString(textureDictionary);
+            _natives.PushScaleformMovieFunctionParameterString(textureName);
+            _natives.PushScaleformMovieFunctionParameterString(subtitle);
+            _natives.PushScaleformMovieFunctionParameterString(string.Empty);
+            _natives.PushScaleformMovieFunctionParameterString(title);
+            _natives.PushScaleformMovieFunctionParameterInt(0);
+            _natives.EndScaleformMovieMethod();
         }
 
         internal async void Update()

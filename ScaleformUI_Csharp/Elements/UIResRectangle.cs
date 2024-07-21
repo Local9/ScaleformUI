@@ -1,5 +1,5 @@
-﻿using CitizenFX.Core.Native;
-using CitizenFX.Core.UI;
+﻿using CitizenFX.Core.UI;
+using ScaleformUI.Scaleforms.ScaleformUI.Interfaces;
 using System.Drawing;
 
 namespace ScaleformUI
@@ -9,6 +9,8 @@ namespace ScaleformUI
     /// </summary>
     public class UIResRectangle : CitizenFX.Core.UI.Rectangle
     {
+        private static IRageNatives _natives => Main.GetNativesHandler();
+
         public UIResRectangle()
         { }
 
@@ -25,14 +27,14 @@ namespace ScaleformUI
             int screenh = Screen.Resolution.Height;
             const float height = 1080f;
             float ratio = (float)screenw / screenh;
-            var width = height * ratio;
+            float width = height * ratio;
 
             float w = Size.Width / width;
             float h = Size.Height / height;
             float x = ((Position.X + offset.Width) / width) + w * 0.5f;
             float y = ((Position.Y + offset.Height) / height) + h * 0.5f;
 
-            API.DrawRect(x, y, w, h, Color.R, Color.G, Color.B, Color.A);
+            _natives.DrawRect(x, y, w, h, Color.R, Color.G, Color.B, Color.A);
         }
 
         public static void Draw(float xPos, float yPos, int boxWidth, int boxHeight, Color color)
@@ -41,14 +43,14 @@ namespace ScaleformUI
             int screenh = Screen.Resolution.Height;
             const float height = 1080f;
             float ratio = (float)screenw / screenh;
-            var width = height * ratio;
+            float width = height * ratio;
 
             float w = boxWidth / width;
             float h = boxHeight / height;
             float x = ((xPos) / width) + w * 0.5f;
             float y = ((yPos) / height) + h * 0.5f;
 
-            API.DrawRect(x, y, w, h, color.R, color.G, color.B, color.A);
+            _natives.DrawRect(x, y, w, h, color.R, color.G, color.B, color.A);
         }
     }
 }

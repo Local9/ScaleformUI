@@ -1,11 +1,13 @@
-﻿using CitizenFX.Core.Native;
-using ScaleformUI.Scaleforms;
+﻿using ScaleformUI.Scaleforms;
+using ScaleformUI.Scaleforms.ScaleformUI.Interfaces;
 using System.Drawing;
 
 namespace ScaleformUI.Elements
 {
     public struct SColor
     {
+        private static IRageNatives _natives => Main.GetNativesHandler();
+
         private readonly Color mainColor;
         private static Random rnd = new();
         public readonly bool IsEmpty => mainColor.IsEmpty;
@@ -409,7 +411,7 @@ namespace ScaleformUI.Elements
         public static SColor FromHudColor(HudColor color)
         {
             int r = 0, g = 0, b = 0, a = 0;
-            API.GetHudColour((int)color, ref r, ref g, ref b, ref a);
+            _natives.GetHudColour((int)color, ref r, ref g, ref b, ref a);
             return FromArgb(a, r, g, b);
         }
 

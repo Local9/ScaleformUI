@@ -1,5 +1,5 @@
-﻿using CitizenFX.Core.Native;
-using CitizenFX.Core.UI;
+﻿using CitizenFX.Core.UI;
+using ScaleformUI.Scaleforms.ScaleformUI.Interfaces;
 using System.Drawing;
 using Font = CitizenFX.Core.UI.Font;
 
@@ -10,6 +10,8 @@ namespace ScaleformUI.Elements
     /// </summary>
     public class UIResText : Text
     {
+        private static IRageNatives _natives => Main.GetNativesHandler();
+
         public UIResText(string caption, PointF position, float scale) : base(caption, position, scale)
         {
             TextAlignment = Alignment.Left;
@@ -55,7 +57,7 @@ namespace ScaleformUI.Elements
             for (int i = 0; i < input.Length; i += maxByteLengthPerString)
             {
                 string substr = (input.Substring(i, Math.Min(maxByteLengthPerString, input.Length - i)));
-                API.AddTextComponentString(substr);
+                _natives.AddTextComponentString(substr);
             }
         }
 
@@ -77,7 +79,7 @@ namespace ScaleformUI.Elements
             int utf8ByteCount = enc.GetByteCount(input);
             if (utf8ByteCount < maxByteLengthPerString)
             {
-                API.AddTextComponentString(input);
+                _natives.AddTextComponentString(input);
                 return;
             }
 
@@ -89,13 +91,13 @@ namespace ScaleformUI.Elements
                 if (enc.GetByteCount(input.Substring(startIndex, length)) > maxByteLengthPerString)
                 {
                     string substr = (input.Substring(startIndex, length - 1));
-                    API.AddTextComponentString(substr);
+                    _natives.AddTextComponentString(substr);
 
                     i -= 1;
                     startIndex = (startIndex + length - 1);
                 }
             }
-            API.AddTextComponentString(input.Substring(startIndex, input.Length - startIndex));
+            _natives.AddTextComponentString(input.Substring(startIndex, input.Length - startIndex));
         }
 
         [Obsolete("Use ScreenTools.GetTextWidth instead.", true)]
@@ -129,34 +131,34 @@ namespace ScaleformUI.Elements
             float x = (Position.X) / width;
             float y = (Position.Y) / height;
 
-            API.SetTextFont((int)Font);
-            API.SetTextScale(1.0f, Scale);
-            API.SetTextColour(Color.R, Color.G, Color.B, Color.A);
+            _natives.SetTextFont((int)Font);
+            _natives.SetTextScale(1.0f, Scale);
+            _natives.SetTextColour(Color.R, Color.G, Color.B, Color.A);
             if (Shadow)
-                API.SetTextDropShadow();
+                _natives.SetTextDropShadow();
             if (Outline)
-                API.SetTextOutline();
+                _natives.SetTextOutline();
             switch (TextAlignment)
             {
                 case Alignment.Center:
-                    API.SetTextCentre(true);
+                    _natives.SetTextCentre(true);
                     break;
                 case Alignment.Right:
-                    API.SetTextRightJustify(true);
-                    API.SetTextWrap(0, x);
+                    _natives.SetTextRightJustify(true);
+                    _natives.SetTextWrap(0, x);
                     break;
             }
 
             if (Wrap != 0)
             {
                 float xsize = (Position.X + Wrap) / width;
-                API.SetTextWrap(x, xsize);
+                _natives.SetTextWrap(x, xsize);
             }
 
-            API.SetTextEntry("jamyfafi");
+            _natives.SetTextEntry("jamyfafi");
             AddLongString(Caption);
 
-            API.DrawText(x, y);
+            _natives.DrawText(x, y);
         }
 
         //public static void Draw(string caption, int xPos, int yPos, Font font, float scale, UnknownColors color, Alignment alignment, bool Shadow, bool outline, int wordWrap)

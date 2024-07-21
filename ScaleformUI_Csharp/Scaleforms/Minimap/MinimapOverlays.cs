@@ -1,7 +1,7 @@
 ﻿using CitizenFX.Core;
 using ScaleformUI.Elements;
+using ScaleformUI.Scaleforms.ScaleformUI.Interfaces;
 using System.Drawing;
-using static CitizenFX.Core.Native.API;
 
 namespace ScaleformUI.Scaleforms
 {
@@ -82,6 +82,7 @@ namespace ScaleformUI.Scaleforms
         public bool Centered { get => centered; set => centered = value; }
 
         public MinimapOverlay() { }
+
         public MinimapOverlay(int handle, string txd, string txn, Vector2 pos, float r, SizeF size, int a, bool centered)
         {
             this.handle = handle;
@@ -97,39 +98,44 @@ namespace ScaleformUI.Scaleforms
 
     public static class MinimapOverlays
     {
+        private static IRageNatives _natives;
+
         internal static List<MinimapOverlay> minimaps = new();
         internal static int overlay = 0;
 
         internal static async Task Load()
         {
-            overlay = AddMinimapOverlay("files/MINIMAP_LOADER.gfx");
-            while (!HasMinimapOverlayLoaded(overlay)) await BaseScript.Delay(0);
-            SetMinimapOverlayDisplay(overlay, 0f, 0f, 100f, 100f, 100f);
+            if (_natives == null)
+                _natives = Main.GetNativesHandler();
+
+            overlay = _natives.AddMinimapOverlay("files/MINIMAP_LOADER.gfx");
+            while (!_natives.HasMinimapOverlayLoaded(overlay)) await BaseScript.Delay(0);
+            _natives.SetMinimapOverlayDisplay(overlay, 0f, 0f, 100f, 100f, 100f);
         }
 
         private static async Task<MinimapOverlay> addOverlay(string method, string txd, string txn, float x, float y, float r, float w, float h, int a, bool centered)
         {
             if (overlay == 0) await Load();
 
-            if (!HasStreamedTextureDictLoaded(txd))
+            if (!_natives.HasStreamedTextureDictLoaded(txd))
             {
-                RequestStreamedTextureDict(txd, false);
-                while (!HasStreamedTextureDictLoaded(txd)) await BaseScript.Delay(0);
+                _natives.RequestStreamedTextureDict(txd, false);
+                while (!_natives.HasStreamedTextureDictLoaded(txd)) await BaseScript.Delay(0);
             }
 
-            CallMinimapScaleformFunction(overlay, method);
-            ScaleformMovieMethodAddParamTextureNameString(txd);
-            ScaleformMovieMethodAddParamTextureNameString(txn);
-            ScaleformMovieMethodAddParamFloat(x);
-            ScaleformMovieMethodAddParamFloat(y);
-            ScaleformMovieMethodAddParamFloat(r);
-            ScaleformMovieMethodAddParamFloat(w);
-            ScaleformMovieMethodAddParamFloat(h);
-            ScaleformMovieMethodAddParamInt(a);
-            ScaleformMovieMethodAddParamBool(centered);
-            EndScaleformMovieMethod();
+            _natives.CallMinimapScaleformFunction(overlay, method);
+            _natives.ScaleformMovieMethodAddParamTextureNameString(txd);
+            _natives.ScaleformMovieMethodAddParamTextureNameString(txn);
+            _natives.ScaleformMovieMethodAddParamFloat(x);
+            _natives.ScaleformMovieMethodAddParamFloat(y);
+            _natives.ScaleformMovieMethodAddParamFloat(r);
+            _natives.ScaleformMovieMethodAddParamFloat(w);
+            _natives.ScaleformMovieMethodAddParamFloat(h);
+            _natives.ScaleformMovieMethodAddParamInt(a);
+            _natives.ScaleformMovieMethodAddParamBool(centered);
+            _natives.EndScaleformMovieMethod();
 
-            SetStreamedTextureDictAsNoLongerNeeded(txd);
+            _natives.SetStreamedTextureDictAsNoLongerNeeded(txd);
 
             MinimapOverlay minOv = new MinimapOverlay(minimaps.Count + 1, txd, txn, new Vector2(x, y), r, new SizeF(w, h), a, centered);
             minimaps.Add(minOv);
@@ -181,13 +187,13 @@ namespace ScaleformUI.Scaleforms
         public static void SetOverlayColor(int overlayId, SColor color)
         {
             if (overlay == 0) return;
-            CallMinimapScaleformFunction(overlay, "SET_OVERLAY_COLOR");
-            ScaleformMovieMethodAddParamInt(overlayId - 1);
-            ScaleformMovieMethodAddParamInt(color.A);
-            ScaleformMovieMethodAddParamInt(color.R);
-            ScaleformMovieMethodAddParamInt(color.G);
-            ScaleformMovieMethodAddParamInt(color.B);
-            EndScaleformMovieMethod();
+            _natives.CallMinimapScaleformFunction(overlay, "SET_OVERLAY_COLOR");
+            _natives.ScaleformMovieMethodAddParamInt(overlayId - 1);
+            _natives.ScaleformMovieMethodAddParamInt(color.A);
+            _natives.ScaleformMovieMethodAddParamInt(color.R);
+            _natives.ScaleformMovieMethodAddParamInt(color.G);
+            _natives.ScaleformMovieMethodAddParamInt(color.B);
+            _natives.EndScaleformMovieMethod();
             minimaps[overlayId - 1].color = color;
         }
 
@@ -199,10 +205,10 @@ namespace ScaleformUI.Scaleforms
         public static void HideOverlay(int overlayId, bool hide)
         {
             if (overlay == 0) return;
-            CallMinimapScaleformFunction(overlay, "HIDE_OVERLAY");
-            ScaleformMovieMethodAddParamInt(overlayId - 1);
-            ScaleformMovieMethodAddParamBool(hide);
-            EndScaleformMovieMethod();
+            _natives.CallMinimapScaleformFunction(overlay, "HIDE_OVERLAY");
+            _natives.ScaleformMovieMethodAddParamInt(overlayId - 1);
+            _natives.ScaleformMovieMethodAddParamBool(hide);
+            _natives.EndScaleformMovieMethod();
             minimaps[overlayId - 1].visible = !hide;
         }
 
@@ -214,10 +220,10 @@ namespace ScaleformUI.Scaleforms
         public static void SetOverlayAlpha(int overlayId, float alpha)
         {
             if (overlay == 0) return;
-            CallMinimapScaleformFunction(overlay, "SET_OVERLAY_ALPHA");
-            ScaleformMovieMethodAddParamInt(overlayId - 1);
-            ScaleformMovieMethodAddParamFloat(alpha);
-            EndScaleformMovieMethod();
+            _natives.CallMinimapScaleformFunction(overlay, "SET_OVERLAY_ALPHA");
+            _natives.ScaleformMovieMethodAddParamInt(overlayId - 1);
+            _natives.ScaleformMovieMethodAddParamFloat(alpha);
+            _natives.EndScaleformMovieMethod();
             minimaps[overlayId - 1].alpha = alpha;
         }
 
@@ -284,32 +290,32 @@ namespace ScaleformUI.Scaleforms
         public static void SetOverlayRotation(int overlayId, float rotation)
         {
             if (overlay == 0) return;
-            CallMinimapScaleformFunction(overlay, "UPDATE_OVERLAY_ROTATION");
-            ScaleformMovieMethodAddParamInt(overlayId - 1);
-            ScaleformMovieMethodAddParamFloat(rotation);
-            EndScaleformMovieMethod();
+            _natives.CallMinimapScaleformFunction(overlay, "UPDATE_OVERLAY_ROTATION");
+            _natives.ScaleformMovieMethodAddParamInt(overlayId - 1);
+            _natives.ScaleformMovieMethodAddParamFloat(rotation);
+            _natives.EndScaleformMovieMethod();
             minimaps[overlayId - 1].rotation = rotation;
         }
 
         private static void overlayPos(int overlayId, float x, float y)
         {
             if (overlay == 0) return;
-            CallMinimapScaleformFunction(overlay, "UPDATE_OVERLAY_POSITION");
-            ScaleformMovieMethodAddParamInt(overlayId - 1);
-            ScaleformMovieMethodAddParamFloat(x);
-            ScaleformMovieMethodAddParamFloat(y);
-            EndScaleformMovieMethod();
+            _natives.CallMinimapScaleformFunction(overlay, "UPDATE_OVERLAY_POSITION");
+            _natives.ScaleformMovieMethodAddParamInt(overlayId - 1);
+            _natives.ScaleformMovieMethodAddParamFloat(x);
+            _natives.ScaleformMovieMethodAddParamFloat(y);
+            _natives.EndScaleformMovieMethod();
             minimaps[overlayId - 1].position = new Vector2(x, y);
         }
 
         private static void overlaySize(int overlayId, float w, float h)
         {
             if (overlay == 0) return;
-            CallMinimapScaleformFunction(overlay, "UPDATE_OVERLAY_SIZE_OR_SCALE");
-            ScaleformMovieMethodAddParamInt(overlayId - 1);
-            ScaleformMovieMethodAddParamFloat(w);
-            ScaleformMovieMethodAddParamFloat(h);
-            EndScaleformMovieMethod();
+            _natives.CallMinimapScaleformFunction(overlay, "UPDATE_OVERLAY_SIZE_OR_SCALE");
+            _natives.ScaleformMovieMethodAddParamInt(overlayId - 1);
+            _natives.ScaleformMovieMethodAddParamFloat(w);
+            _natives.ScaleformMovieMethodAddParamFloat(h);
+            _natives.EndScaleformMovieMethod();
             minimaps[overlayId - 1].size = new SizeF(w, h);
         }
 
@@ -321,9 +327,9 @@ namespace ScaleformUI.Scaleforms
         public static async void RemoveOverlayFromMinimap(int overlayId)
         {
             if (overlay == 0) await Load();
-            CallMinimapScaleformFunction(overlay, "REM_OVERLAY");
-            ScaleformMovieMethodAddParamInt(overlayId - 1);
-            EndScaleformMovieMethod();
+            _natives.CallMinimapScaleformFunction(overlay, "REM_OVERLAY");
+            _natives.ScaleformMovieMethodAddParamInt(overlayId - 1);
+            _natives.EndScaleformMovieMethod();
             minimaps.RemoveAt(overlayId - 1);
         }
 
@@ -333,8 +339,8 @@ namespace ScaleformUI.Scaleforms
         public static void ClearAll()
         {
             if (overlay == 0) return;
-            CallMinimapScaleformFunction(overlay, "CLEAR_ALL");
-            EndScaleformMovieMethod();
+            _natives.CallMinimapScaleformFunction(overlay, "CLEAR_ALL");
+            _natives.EndScaleformMovieMethod();
             minimaps.Clear();
         }
     }

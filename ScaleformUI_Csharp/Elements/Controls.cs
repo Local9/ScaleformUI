@@ -1,5 +1,5 @@
 ﻿using CitizenFX.Core;
-using static CitizenFX.Core.Native.API;
+using ScaleformUI.Scaleforms.ScaleformUI.Interfaces;
 
 namespace ScaleformUI.Elements
 {
@@ -8,6 +8,8 @@ namespace ScaleformUI.Elements
     /// </summary>
     public static class Controls
     {
+        private static IRageNatives _natives => Main.GetNativesHandler();
+
         /// <summary>
         /// All of the controls required for using a keyboard.
         /// </summary>
@@ -87,7 +89,7 @@ namespace ScaleformUI.Elements
                 Control[] list = Game.CurrentInputMode == InputMode.GamePad ? NecessaryControlsGamePad : NecessaryControlsKeyboard;
                 // Then, enable all of the controls for that input mode
                 foreach (Control control in list)
-                    EnableControlAction(0, (int)control, true);
+                    _natives.EnableControlAction(0, (int)control, true);
             }
         }
     }

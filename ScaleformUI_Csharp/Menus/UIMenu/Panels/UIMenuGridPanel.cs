@@ -1,5 +1,5 @@
 ﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
+using ScaleformUI.Scaleforms.ScaleformUI.Interfaces;
 using System.Drawing;
 
 namespace ScaleformUI.Menu
@@ -12,6 +12,8 @@ namespace ScaleformUI.Menu
 
     public class UIMenuGridPanel : UIMenuPanel
     {
+        private readonly IRageNatives _natives;
+
         public string TopLabel { get; set; }
         public string LeftLabel { get; set; }
         public string RightLabel { get; set; }
@@ -32,6 +34,11 @@ namespace ScaleformUI.Menu
                 _value = value;
                 _setValue(value);
             }
+        }
+
+        private UIMenuGridPanel()
+        {
+            _natives = Main.GetNativesHandler();
         }
 
         /// <summary>
@@ -86,14 +93,14 @@ namespace ScaleformUI.Menu
         {
             int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(ParentItem));
             int van = ParentItem.Panels.IndexOf(this);
-            API.BeginScaleformMovieMethod(Main.scaleformUI.Handle, "SET_GRID_PANEL_POSITION_RETURN_VALUE");
-            API.ScaleformMovieMethodAddParamInt(0);
-            API.ScaleformMovieMethodAddParamInt(1);
-            API.ScaleformMovieMethodAddParamFloat(mouse.X);
-            API.ScaleformMovieMethodAddParamFloat(mouse.Y);
-            int ret = API.EndScaleformMovieMethodReturnValue();
-            while (!API.IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-            string res = API.GetScaleformMovieMethodReturnValueString(ret);
+            _natives.BeginScaleformMovieMethod(Main.scaleformUI.Handle, "SET_GRID_PANEL_POSITION_RETURN_VALUE");
+            _natives.ScaleformMovieMethodAddParamInt(0);
+            _natives.ScaleformMovieMethodAddParamInt(1);
+            _natives.ScaleformMovieMethodAddParamFloat(mouse.X);
+            _natives.ScaleformMovieMethodAddParamFloat(mouse.Y);
+            int ret = _natives.EndScaleformMovieMethodReturnValue();
+            while (!_natives.IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+            string res = _natives.GetScaleformMovieMethodReturnValueString(ret);
             string[] returned = res.Split(',');
             _value = new PointF(Convert.ToSingle(returned[0]), Convert.ToSingle(returned[1]));
         }

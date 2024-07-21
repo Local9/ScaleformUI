@@ -1,10 +1,12 @@
 ﻿using ScaleformUI.PauseMenu;
-using static CitizenFX.Core.Native.API;
+using ScaleformUI.Scaleforms.ScaleformUI.Interfaces;
 
 namespace ScaleformUI.PauseMenus.Elements.Items
 {
     public class GalleryItem
     {
+        private readonly IRageNatives _natives;
+
         public string TextureDictionary { get; private set; }
         public string TextureName { get; private set; }
         public string Label1 { get; private set; }
@@ -20,6 +22,7 @@ namespace ScaleformUI.PauseMenus.Elements.Items
 
         public GalleryItem(string textureDictionary, string textureName)
         {
+            _natives = Main.GetNativesHandler();
             TextureDictionary = textureDictionary;
             TextureName = textureName;
         }
@@ -42,12 +45,12 @@ namespace ScaleformUI.PauseMenus.Elements.Items
             if (Blip != null) return;
             if (Parent != null && Parent.Visible && Parent.IsItemVisible(Parent.GalleryItems.IndexOf(this)))
             {
-                AddTextEntry("gallerytab_desc", RightPanelDescription);
+                _natives.AddTextEntry("gallerytab_desc", RightPanelDescription);
                 Parent.Parent._pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
-                BeginScaleformMovieMethod(Parent.Parent._pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
-                BeginTextCommandScaleformString("gallerytab_desc");
-                EndTextCommandScaleformString_2();
-                EndScaleformMovieMethod();
+                _natives.BeginScaleformMovieMethod(Parent.Parent._pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
+                _natives.BeginTextCommandScaleformString("gallerytab_desc");
+                _natives.EndTextCommandScaleformString_2();
+                _natives.EndScaleformMovieMethod();
             }
         }
 

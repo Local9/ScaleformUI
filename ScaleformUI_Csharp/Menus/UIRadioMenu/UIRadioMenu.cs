@@ -1,10 +1,10 @@
 ﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
 using ScaleformUI.Elements;
 using ScaleformUI.Menu;
 using ScaleformUI.Menus;
 using ScaleformUI.Scaleforms;
+using ScaleformUI.Scaleforms.ScaleformUI.Interfaces;
 
 namespace ScaleformUI.Radio
 {
@@ -19,6 +19,7 @@ namespace ScaleformUI.Radio
     }
     public class UIRadioMenu : MenuBase
     {
+        private readonly IRageNatives _natives;
         private bool visible;
         private bool isAnimating;
         private int currentSelection;
@@ -33,6 +34,7 @@ namespace ScaleformUI.Radio
         public List<RadioItem> Stations { get; private set; }
         public UIRadioMenu()
         {
+            _natives = Main.GetNativesHandler();
             Stations = new List<RadioItem>();
             InstructionalButtons = new List<InstructionalButton>()
             {
@@ -129,8 +131,8 @@ namespace ScaleformUI.Radio
             Game.DisableControlThisFrame(0, Control.LookUpDown);
 
             // take mouse/gamepad LStick
-            float x = (float)Math.Floor(API.GetDisabledControlNormal(2, 13) * 1000);
-            float y = (float)Math.Floor(API.GetDisabledControlNormal(2, 12) * 1000);
+            float x = (float)Math.Floor(_natives.GetDisabledControlNormal(2, 13) * 1000);
+            float y = (float)Math.Floor(_natives.GetDisabledControlNormal(2, 12) * 1000);
 
             // math.atan2 returns 0 when mouse/gamepad LStick move right, because y=0 and x is not negative..
             // as a workaround.. i set y = 1, this way left is checked correctly

@@ -1,5 +1,4 @@
 ﻿using ScaleformUI.Scaleforms;
-using static CitizenFX.Core.Native.API;
 
 namespace ScaleformUI.PauseMenus.Elements.Items
 {
@@ -29,31 +28,31 @@ namespace ScaleformUI.PauseMenus.Elements.Items
         public void SetupCustomRoute()
         {
             if (StartPoint.Position.IsZero) return;
-            ClearGpsFlags();
-            SetGpsFlags(8, 0f);
-            StartGpsCustomRoute((int)RouteColor, true, true);
+            Natives.ClearGpsFlags();
+            Natives.SetGpsFlags(8, 0f);
+            Natives.StartGpsCustomRoute((int)RouteColor, true, true);
 
-            RaceGalleryNextBlipSprite(StartPoint.BlipSprite);
-            RaceGalleryAddBlip(StartPoint.Position.X, StartPoint.Position.Y, StartPoint.Position.Z);
+            Natives.RaceGalleryNextBlipSprite(StartPoint.BlipSprite);
+            Natives.RaceGalleryAddBlip(StartPoint.Position.X, StartPoint.Position.Y, StartPoint.Position.Z);
 
-            AddPointToGpsCustomRoute(StartPoint.Position.X, StartPoint.Position.Y, StartPoint.Position.Z);
+            Natives.AddPointToGpsCustomRoute(StartPoint.Position.X, StartPoint.Position.Y, StartPoint.Position.Z);
 
             for (int i = 0; i < CheckPoints.Count; i++)
             {
                 MinimapRaceCheckpoint checkPoint = CheckPoints[i];
-                RaceGalleryNextBlipSprite(checkPoint.BlipSprite);
-                int blip = RaceGalleryAddBlip(checkPoint.Position.X, checkPoint.Position.Y, checkPoint.Position.Z);
+                Natives.RaceGalleryNextBlipSprite(checkPoint.BlipSprite);
+                int blip = Natives.RaceGalleryAddBlip(checkPoint.Position.X, checkPoint.Position.Y, checkPoint.Position.Z);
                 if (checkPoint.Scale > 0)
-                    SetBlipScale(blip, checkPoint.Scale);
-                SetBlipColour(blip, (int)checkPoint.Color);
-                AddPointToGpsCustomRoute(checkPoint.Position.X, checkPoint.Position.Y, checkPoint.Position.Z);
+                    Natives.SetBlipScale(blip, checkPoint.Scale);
+                Natives.SetBlipColour(blip, (int)checkPoint.Color);
+                Natives.AddPointToGpsCustomRoute(checkPoint.Position.X, checkPoint.Position.Y, checkPoint.Position.Z);
             }
 
-            RaceGalleryNextBlipSprite(EndPoint.BlipSprite);
-            RaceGalleryAddBlip(EndPoint.Position.X, EndPoint.Position.Y, EndPoint.Position.Z);
-            AddPointToGpsCustomRoute(EndPoint.Position.X, EndPoint.Position.Y, EndPoint.Position.Z);
+            Natives.RaceGalleryNextBlipSprite(EndPoint.BlipSprite);
+            Natives.RaceGalleryAddBlip(EndPoint.Position.X, EndPoint.Position.Y, EndPoint.Position.Z);
+            Natives.AddPointToGpsCustomRoute(EndPoint.Position.X, EndPoint.Position.Y, EndPoint.Position.Z);
 
-            SetGpsCustomRouteRender(true, 18, MapThickness); ;
+            Natives.SetGpsCustomRouteRender(true, 18, MapThickness); ;
         }
     }
 }

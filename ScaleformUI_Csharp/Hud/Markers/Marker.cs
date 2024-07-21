@@ -1,11 +1,13 @@
 ﻿using CitizenFX.Core;
 using ScaleformUI.Elements;
-using static CitizenFX.Core.Native.API;
+using ScaleformUI.Scaleforms.ScaleformUI.Interfaces;
 
 namespace ScaleformUI
 {
     public class Marker
     {
+        private readonly IRageNatives _natives;
+
         internal float _height = 0;
         private float distance;
 
@@ -33,6 +35,11 @@ namespace ScaleformUI
         /// It doesn't work on water and under the map!
         /// </summary>
         public bool PlaceOnGround { get; set; }
+
+        private Marker()
+        {
+            _natives = Main.GetNativesHandler();
+        }
 
         /// <summary>
         /// Creates a Marker in a world position
@@ -91,7 +98,7 @@ namespace ScaleformUI
             // We draw it with _height + 0.1 to ensure marker drawing (like horizontal circles)
             if (IsInRange && PlaceOnGround && (Position.Z != _height + 0.1f))
             {
-                if (GetGroundZFor_3dCoord(Position.X, Position.Y, Position.Z, ref _height, false))
+                if (_natives.GetGroundZFor_3dCoord(Position.X, Position.Y, Position.Z, ref _height, false))
                     Position = new Vector3(Position.X, Position.Y, _height + 0.03f);
             }
             World.DrawMarker(MarkerType, Position, Direction, Rotation, Scale, Color.ToColor(), BobUpDown, FaceCamera, Rotate);

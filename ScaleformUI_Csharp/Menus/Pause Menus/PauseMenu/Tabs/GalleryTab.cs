@@ -1,7 +1,6 @@
 ﻿using ScaleformUI.Elements;
 using ScaleformUI.PauseMenus.Elements.Items;
 using ScaleformUI.PauseMenus.Elements.Panels;
-using static CitizenFX.Core.Native.API;
 
 namespace ScaleformUI.PauseMenu
 {
@@ -127,23 +126,23 @@ namespace ScaleformUI.PauseMenu
         {
             if (!bigPic)
             {
-                BeginScaleformMovieMethod(Parent._pause._pause.Handle, "SET_GALLERY_SCROLL_LABEL");
-                ScaleformMovieMethodAddParamInt(0);
-                ScaleformMovieMethodAddParamInt(0);
-                ScaleformMovieMethodAddParamInt(0);
-                BeginTextCommandScaleformString("GAL_NUM_PAGES");
-                AddTextComponentInteger(CurPage + 1);
-                AddTextComponentInteger(MaxPages);
-                EndTextCommandScaleformString();
-                EndScaleformMovieMethod();
+                Natives.BeginScaleformMovieMethod(Parent._pause._pause.Handle, "SET_GALLERY_SCROLL_LABEL");
+                Natives.ScaleformMovieMethodAddParamInt(0);
+                Natives.ScaleformMovieMethodAddParamInt(0);
+                Natives.ScaleformMovieMethodAddParamInt(0);
+                Natives.BeginTextCommandScaleformString("GAL_NUM_PAGES");
+                Natives.AddTextComponentInteger(CurPage + 1);
+                Natives.AddTextComponentInteger(MaxPages);
+                Natives.EndTextCommandScaleformString();
+                Natives.EndScaleformMovieMethod();
             }
             else
             {
-                BeginScaleformMovieMethod(Parent._pause._pause.Handle, "SET_GALLERY_SCROLL_LABEL");
-                ScaleformMovieMethodAddParamInt(currentIndex);
-                ScaleformMovieMethodAddParamInt(GalleryItems.Count);
-                ScaleformMovieMethodAddParamInt(maxItemsPerPage);
-                EndScaleformMovieMethod();
+                Natives.BeginScaleformMovieMethod(Parent._pause._pause.Handle, "SET_GALLERY_SCROLL_LABEL");
+                Natives.ScaleformMovieMethodAddParamInt(currentIndex);
+                Natives.ScaleformMovieMethodAddParamInt(GalleryItems.Count);
+                Natives.ScaleformMovieMethodAddParamInt(maxItemsPerPage);
+                Natives.EndScaleformMovieMethod();
             }
         }
 

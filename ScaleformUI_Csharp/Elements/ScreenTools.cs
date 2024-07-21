@@ -1,8 +1,8 @@
 ﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
+using ScaleformUI.Scaleforms.ScaleformUI.Interfaces;
 using System.Drawing;
-using static CitizenFX.Core.Native.API;
 
 namespace ScaleformUI.Elements
 {
@@ -11,6 +11,8 @@ namespace ScaleformUI.Elements
     /// </summary>
     public static class ScreenTools
     {
+        private static IRageNatives _natives => Main.GetNativesHandler();
+
         /// <summary>
         /// The 1080pixels-based screen resolution while mantaining current aspect ratio.
         /// </summary>
@@ -59,8 +61,8 @@ namespace ScaleformUI.Elements
             // Get the resolution while maintaining the ratio.
             SizeF res = ResolutionMaintainRatio;
             // Then, get the position of mouse on the screen while relative to the current resolution
-            float mouseX = GetDisabledControlNormal(0, 239) * res.Width;
-            float mouseY = GetDisabledControlNormal(0, 240) * res.Height;
+            float mouseX = _natives.GetDisabledControlNormal(0, 239) * res.Width;
+            float mouseY = _natives.GetDisabledControlNormal(0, 240) * res.Height;
             // And check if the mouse is on the rectangle bounds
             bool isX = mouseX >= topLeft.X && mouseX <= topLeft.X + boxSize.Width;
             bool isY = mouseY > topLeft.Y && mouseY < topLeft.Y + boxSize.Height;
@@ -90,8 +92,8 @@ namespace ScaleformUI.Elements
             Game.EnableControlThisFrame(0, Control.CursorY);
             SizeF res = ResolutionMaintainRatio;
 
-            float mouseX = GetDisabledControlNormal(0, 239) * res.Width;
-            float mouseY = GetDisabledControlNormal(0, 240) * res.Height;
+            float mouseX = _natives.GetDisabledControlNormal(0, 239) * res.Width;
+            float mouseY = _natives.GetDisabledControlNormal(0, 240) * res.Height;
 
             mouseX += DrawOffset.X;
             mouseY += DrawOffset.Y;
@@ -112,7 +114,7 @@ namespace ScaleformUI.Elements
             get
             {
                 // Get the size of the safezone as a float
-                float t = GetSafeZoneSize();
+                float t = _natives.GetSafeZoneSize();
                 // Round the value with a max of 2 decimal places and do some calculations
                 double g = Math.Round(Convert.ToDouble(t), 2);
                 g = (g * 100) - 90;
@@ -141,15 +143,15 @@ namespace ScaleformUI.Elements
         public static float GetTextWidth(string text, CitizenFX.Core.UI.Font font, float scale)
         {
             // Start by requesting the game to start processing a width measurement
-            SetTextEntryForWidth("CELL_EMAIL_BCON"); // _BEGIN_TEXT_COMMAND_WIDTH
-                                                     // Add the text string
+            _natives.SetTextEntryForWidth("CELL_EMAIL_BCON"); // _BEGIN_TEXT_COMMAND_WIDTH
+                                                              // Add the text string
             UIResText.AddLongString(text);
             // Set the properties for the text
-            SetTextFont((int)font);
-            SetTextScale(1f, scale);
+            _natives.SetTextFont((int)font);
+            _natives.SetTextScale(1f, scale);
 
             // Ask the game for the relative string width
-            float width = GetTextScreenWidth(true);
+            float width = _natives.GetTextScreenWidth(true);
             // And return the literal result
             return ResolutionMaintainRatio.Width * width;
         }
@@ -164,7 +166,7 @@ namespace ScaleformUI.Elements
         public static int GetLineCount(string text, Point position, CitizenFX.Core.UI.Font font, float scale, int wrap)
         {
             // Tell the game that we are going to request the number of lines
-            BeginTextCommandLineCount("CELL_EMAIL_BCON"); // _BEGIN_TEXT_COMMAND_LINE_COUNT
+            _natives.BeginTextCommandLineCount("CELL_EMAIL_BCON"); // _BEGIN_TEXT_COMMAND_LINE_COUNT
 
             UIResText.AddLongString(text);// Add the text that has been sent to us
 
@@ -175,8 +177,8 @@ namespace ScaleformUI.Elements
             float y = position.Y / res.Height;
 
             // Set the properties for the text
-            SetTextFont((int)font);
-            SetTextScale(1f, scale);
+            _natives.SetTextFont((int)font);
+            _natives.SetTextScale(1f, scale);
 
             // If there is some text wrap to add
             if (wrap > 0)
@@ -185,16 +187,16 @@ namespace ScaleformUI.Elements
                 float start = position.X / res.Width;
                 float end = start + (wrap / res.Width);
                 // And apply it
-                SetTextWrap(x, end);
+                _natives.SetTextWrap(x, end);
             }
             // Finally, return the number of lines being made by the string
-            return GetTextScreenLineCount(x, y); // _GET_TEXT_SCREEN_LINE_COUNT
+            return _natives.GetTextScreenLineCount(x, y); // _GET_TEXT_SCREEN_LINE_COUNT
         }
 
         public static int GetLineCount(string text, PointF position, CitizenFX.Core.UI.Font font, float scale, float wrap)
         {
             // Tell the game that we are going to request the number of lines
-            BeginTextCommandLineCount("CELL_EMAIL_BCON"); // _BEGIN_TEXT_COMMAND_LINE_COUNT
+            _natives.BeginTextCommandLineCount("CELL_EMAIL_BCON"); // _BEGIN_TEXT_COMMAND_LINE_COUNT
 
             // Add the text that has been sent to us
             UIResText.AddLongString(text);// Add the text that has been sent to us
@@ -205,8 +207,8 @@ namespace ScaleformUI.Elements
             float y = position.Y / res.Height;
 
             // Set the properties for the text
-            SetTextFont((int)font);
-            SetTextScale(1f, scale);
+            _natives.SetTextFont((int)font);
+            _natives.SetTextScale(1f, scale);
 
             // If there is some text wrap to add
             if (wrap > 0)
@@ -215,10 +217,10 @@ namespace ScaleformUI.Elements
                 float start = position.X / res.Width;
                 float end = start + (wrap / res.Width);
                 // And apply it
-                SetTextWrap(x, end);
+                _natives.SetTextWrap(x, end);
             }
             // Finally, return the number of lines being made by the string
-            return GetTextScreenLineCount(x, y); // _GET_TEXT_SCREEN_LINE_COUNT
+            return _natives.GetTextScreenLineCount(x, y); // _GET_TEXT_SCREEN_LINE_COUNT
         }
     }
 }

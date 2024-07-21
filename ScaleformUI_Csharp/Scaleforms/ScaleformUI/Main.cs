@@ -1,6 +1,8 @@
 ﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
+using Microsoft.Extensions.DependencyInjection;
 using ScaleformUI.Scaleforms;
+using ScaleformUI.Scaleforms.ScaleformUI.Controllers;
+using ScaleformUI.Scaleforms.ScaleformUI.Interfaces;
 
 namespace ScaleformUI
 {
@@ -9,7 +11,10 @@ namespace ScaleformUI
         /// <summary>
         /// Provides the current game time in milliseconds.
         /// </summary>
-        public static int GameTime = API.GetNetworkTime();
+        public static int GameTime = 0;
+
+        private static ServiceProvider _serviceProvider;
+        private static IRageNatives _natives;
 
         public static PauseMenuScaleform PauseMenu { get; internal set; }
         public static MediumMessageHandler MedMessageInstance { get; internal set; }
@@ -29,6 +34,10 @@ namespace ScaleformUI
         internal static ScaleformWideScreen radioMenu { get; set; }
         public Main()
         {
+            SetupServices();
+
+            _natives = GetNativesHandler();
+
             Warning = new();
             MedMessageInstance = new();
             BigMessageInstance = new();
@@ -49,7 +58,7 @@ namespace ScaleformUI
             MinimapOverlays.Load();
             EventHandlers["onResourceStop"] += new Action<string>((resName) =>
             {
-                if (resName == API.GetCurrentResourceName())
+                if (resName == _natives.GetCurrentResourceName())
                 {
                     if (MenuHandler.IsAnyMenuOpen || MenuHandler.IsAnyPauseMenuOpen)
                         MenuHandler.CloseAndClearHistory();
@@ -60,37 +69,56 @@ namespace ScaleformUI
                     scaleformUI?.CallFunction("CLEAR_ALL");
                     scaleformUI?.Dispose();
                     PauseMenu?.Dispose();
-                    API.N_0x2de6c5e2e996f178(1);
-                    API.RaceGalleryFullscreen(false);
-                    API.ClearRaceGalleryBlips();
-                    API.SetRadarZoom(0);
-                    API.SetGpsCustomRouteRender(false, 18, 30);
-                    API.SetGpsMultiRouteRender(false);
-                    API.UnlockMinimapPosition();
-                    API.UnlockMinimapAngle();
-                    API.DeleteWaypoint();
-                    API.ClearGpsCustomRoute();
-                    API.ClearGpsFlags();
+                    _natives.PauseToggleFullscreenMap(true);
+                    _natives.RaceGalleryFullscreen(false);
+                    _natives.ClearRaceGalleryBlips();
+                    _natives.SetRadarZoom(0);
+                    _natives.SetGpsCustomRouteRender(false, 18, 30);
+                    _natives.SetGpsMultiRouteRender(false);
+                    _natives.UnlockMinimapPosition();
+                    _natives.UnlockMinimapAngle();
+                    _natives.DeleteWaypoint();
+                    _natives.ClearGpsCustomRoute();
+                    _natives.ClearGpsFlags();
                 }
             });
         }
 
+        static void SetupServices()
+        {
+            ServiceCollection services = new ServiceCollection();
+#if FIVEM
+            services.AddSingleton<IRageNatives, FivemNativesHandler>();
+#elif ALTV
+            services.AddSingleton<IRageNatives, AltvNativesHandler>();
+#endif
+            _serviceProvider = services.BuildServiceProvider();
+        }
+
+        public static IRageNatives GetNativesHandler()
+        {
+            return _serviceProvider.GetRequiredService<IRageNatives>();
+        }
+
         private async Task ScaleformUIThread_Tick()
         {
-            if (MenuHandler.ableToDraw && !(API.IsWarningMessageActive() || Warning.IsShowing))
+            if (_natives == null)
+                _natives = GetNativesHandler();
+
+            if (MenuHandler.ableToDraw && !(_natives.IsWarningMessageActive() || Warning.IsShowing))
             {
                 MenuHandler.ProcessMenus();
-                if (API.GetCurrentFrontendMenuVersion() == API.GetHashKey("FE_MENU_VERSION_CORONA"))
+                if (_natives.GetCurrentFrontendMenuVersion() == _natives.GetHashKey("FE_MENU_VERSION_CORONA"))
                 {
-                    API.BeginScaleformMovieMethodOnFrontend("INSTRUCTIONAL_BUTTONS");
-                    API.ScaleformMovieMethodAddParamPlayerNameString("SET_DATA_SLOT_EMPTY");
-                    API.EndScaleformMovieMethod();
-                    API.BeginScaleformMovieMethodOnFrontendHeader("SHOW_MENU");
-                    API.ScaleformMovieMethodAddParamBool(false);
-                    API.EndScaleformMovieMethod();
-                    API.BeginScaleformMovieMethodOnFrontendHeader("SHOW_HEADING_DETAILS");
-                    API.ScaleformMovieMethodAddParamBool(false);
-                    API.EndScaleformMovieMethod();
+                    _natives.BeginScaleformMovieMethodOnFrontend("INSTRUCTIONAL_BUTTONS");
+                    _natives.ScaleformMovieMethodAddParamPlayerNameString("SET_DATA_SLOT_EMPTY");
+                    _natives.EndScaleformMovieMethod();
+                    _natives.BeginScaleformMovieMethodOnFrontendHeader("SHOW_MENU");
+                    _natives.ScaleformMovieMethodAddParamBool(false);
+                    _natives.EndScaleformMovieMethod();
+                    _natives.BeginScaleformMovieMethodOnFrontendHeader("SHOW_HEADING_DETAILS");
+                    _natives.ScaleformMovieMethodAddParamBool(false);
+                    _natives.EndScaleformMovieMethod();
                 }
             }
 
@@ -98,7 +126,7 @@ namespace ScaleformUI
                 Warning.Update();
             if (InstructionalButtons._sc != null && (InstructionalButtons.ControlButtons != null && InstructionalButtons.ControlButtons.Count != 0))
                 InstructionalButtons.Update();
-            if (Game.IsPaused) return;
+            if (_natives.IsGamePaused()) return;
             if (MedMessageInstance._sc != null)
                 MedMessageInstance.Update();
             if (BigMessageInstance._sc != null)
@@ -124,7 +152,10 @@ namespace ScaleformUI
         /// <returns></returns>
         public async Task OnUpdateGlobalGameTimerAsync()
         {
-            GameTime = API.GetNetworkTimeAccurate();
+            if (_natives == null)
+                _natives = GetNativesHandler();
+
+            GameTime = _natives.GetNetworkTimeAccurate();
         }
     }
 }

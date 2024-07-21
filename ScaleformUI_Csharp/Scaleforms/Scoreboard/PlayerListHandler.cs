@@ -1,10 +1,12 @@
 ﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
+using ScaleformUI.Scaleforms.ScaleformUI.Interfaces;
 
 namespace ScaleformUI.Scaleforms
 {
     public class PlayerListHandler
     {
+        private readonly IRageNatives _natives;
+
         private int _start;
         private int _timer;
         public bool Enabled { get; set; }
@@ -41,6 +43,7 @@ namespace ScaleformUI.Scaleforms
 
         public PlayerListHandler()
         {
+            _natives = Main.GetNativesHandler();
             PlayerRows = new List<PlayerRow>();
         }
 
@@ -66,7 +69,7 @@ namespace ScaleformUI.Scaleforms
             _sc.Dispose();
             _sc = null;
             for (int x = 0; x < 1024; x++) // cleaning up in case of a reload, this frees up all ped headshot handles :)
-                API.UnregisterPedheadshot(x);
+                _natives.UnregisterPedheadshot(x);
         }
 
         public void SetTitle(string left, string right, int icon)
@@ -128,7 +131,7 @@ namespace ScaleformUI.Scaleforms
 
         internal void Update()
         {
-            API.DrawScaleformMovie(_sc.Handle, Position.X, Position.Y, 0.28f, 0.6f, 255, 255, 255, 255, 0);
+            _natives.DrawScaleformMovie(_sc.Handle, Position.X, Position.Y, 0.28f, 0.6f, 255, 255, 255, 255, 0);
             if (_start != 0 && Main.GameTime - _start > _timer)
             {
                 CurrentPage = 0;

@@ -1,10 +1,11 @@
 ﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
+using ScaleformUI.Scaleforms.ScaleformUI.Interfaces;
 
 namespace ScaleformUI.Scaleforms
 {
-    public class RankBarHandler
+    public class RankBarHandler : IScaleformModule
     {
+        private readonly IRageNatives _natives;
         private const int HUD_COMPONENT_ID = 19;
 
         private HudColor _rankBarColor = HudColor.HUD_COLOUR_FREEMODE;
@@ -21,15 +22,18 @@ namespace ScaleformUI.Scaleforms
             }
         }
 
-        public RankBarHandler() { }
+        public RankBarHandler()
+        {
+            _natives = Main.GetNativesHandler();
+        }
 
         public async Task Load()
         {
             int timeout = 1000;
 
             int start = Main.GameTime;
-            API.RequestHudScaleform(HUD_COMPONENT_ID);
-            while (!API.HasHudScaleformLoaded(HUD_COMPONENT_ID) && Main.GameTime - start < timeout)
+            _natives.RequestHudScaleform(HUD_COMPONENT_ID);
+            while (!_natives.HasHudScaleformLoaded(HUD_COMPONENT_ID) && Main.GameTime - start < timeout)
             {
                 await BaseScript.Delay(0);
             }
@@ -48,44 +52,44 @@ namespace ScaleformUI.Scaleforms
             await Load();
 
             // Color has to be set else it will be white by default
-            API.BeginScaleformMovieMethodHudComponent(HUD_COMPONENT_ID, "SET_COLOUR");
-            API.PushScaleformMovieFunctionParameterInt((int)_rankBarColor);
-            API.EndScaleformMovieMethod();
+            _natives.BeginScaleformMovieMethodHudComponent(HUD_COMPONENT_ID, "SET_COLOUR");
+            _natives.PushScaleformMovieFunctionParameterInt((int)_rankBarColor);
+            _natives.EndScaleformMovieMethod();
 
             // this will set an update the score
-            API.BeginScaleformMovieMethodHudComponent(HUD_COMPONENT_ID, "SET_RANK_SCORES");
-            API.PushScaleformMovieFunctionParameterInt(limitStart);
-            API.PushScaleformMovieFunctionParameterInt(limitEnd);
-            API.PushScaleformMovieFunctionParameterInt(previousValue);
-            API.PushScaleformMovieFunctionParameterInt(currentValue);
-            API.PushScaleformMovieFunctionParameterInt(currentRank);
-            API.PushScaleformMovieFunctionParameterInt(100);
-            API.EndScaleformMovieMethod();
+            _natives.BeginScaleformMovieMethodHudComponent(HUD_COMPONENT_ID, "SET_RANK_SCORES");
+            _natives.PushScaleformMovieFunctionParameterInt(limitStart);
+            _natives.PushScaleformMovieFunctionParameterInt(limitEnd);
+            _natives.PushScaleformMovieFunctionParameterInt(previousValue);
+            _natives.PushScaleformMovieFunctionParameterInt(currentValue);
+            _natives.PushScaleformMovieFunctionParameterInt(currentRank);
+            _natives.PushScaleformMovieFunctionParameterInt(100);
+            _natives.EndScaleformMovieMethod();
         }
 
         public void Remove()
         {
-            if (API.HasHudScaleformLoaded(HUD_COMPONENT_ID))
+            if (_natives.HasHudScaleformLoaded(HUD_COMPONENT_ID))
             {
-                API.BeginScaleformScriptHudMovieMethod(HUD_COMPONENT_ID, "REMOVE");
-                API.EndScaleformMovieMethod();
+                _natives.BeginScaleformScriptHudMovieMethod(HUD_COMPONENT_ID, "REMOVE");
+                _natives.EndScaleformMovieMethod();
             }
         }
 
         public async void OverrideAnimationSpeed(int speed = 1000)
         {
             await Load();
-            API.BeginScaleformScriptHudMovieMethod(HUD_COMPONENT_ID, "OVERRIDE_ANIMATION_SPEED");
-            API.PushScaleformMovieFunctionParameterInt(speed);
-            API.EndScaleformMovieMethod();
+            _natives.BeginScaleformScriptHudMovieMethod(HUD_COMPONENT_ID, "OVERRIDE_ANIMATION_SPEED");
+            _natives.PushScaleformMovieFunctionParameterInt(speed);
+            _natives.EndScaleformMovieMethod();
         }
 
         public async void OverrideOnscreenDuration(int duration = 4000)
         {
             await Load();
-            API.BeginScaleformScriptHudMovieMethod(HUD_COMPONENT_ID, "OVERRIDE_ONSCREEN_DURATION");
-            API.PushScaleformMovieFunctionParameterInt(duration);
-            API.EndScaleformMovieMethod();
+            _natives.BeginScaleformScriptHudMovieMethod(HUD_COMPONENT_ID, "OVERRIDE_ONSCREEN_DURATION");
+            _natives.PushScaleformMovieFunctionParameterInt(duration);
+            _natives.EndScaleformMovieMethod();
         }
     }
 }

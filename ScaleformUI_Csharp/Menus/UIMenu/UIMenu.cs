@@ -3,8 +3,8 @@ using CitizenFX.Core.UI;
 using ScaleformUI.Elements;
 using ScaleformUI.Menus;
 using ScaleformUI.Scaleforms;
+using ScaleformUI.Scaleforms.ScaleformUI.Interfaces;
 using System.Drawing;
-using static CitizenFX.Core.Native.API;
 using Control = CitizenFX.Core.Control;
 
 namespace ScaleformUI.Menu
@@ -861,6 +861,8 @@ namespace ScaleformUI.Menu
     public class UIMenu : MenuBase
     {
         #region Private Fields
+        private readonly IRageNatives _natives;
+
         private bool _visible;
         private bool _justOpened = true;
         private bool _itemsDirty = false;
@@ -1162,6 +1164,8 @@ namespace ScaleformUI.Menu
         /// <param name="fadingTime">Set fading time for the menu and the items, set it to 0.0 to disable it.</param>
         public UIMenu(string title, string subtitle, PointF offset, string spriteLibrary, string spriteName, bool glare = false, bool alternativeTitle = false, float fadingTime = 0.1f)
         {
+            _natives = Main.GetNativesHandler();
+
             _customTexture = new KeyValuePair<string, string>(spriteLibrary, spriteName);
             Offset = offset;
             WidthOffset = 0;
@@ -1233,7 +1237,7 @@ namespace ScaleformUI.Menu
                 new InstructionalButton(Control.PhoneCancel, _backTextLocalized)
             };
             itemless = true;
-            AddTextEntry("ScaleformUILongDesc", description);
+            _natives.AddTextEntry("ScaleformUILongDesc", description);
         }
 
         #endregion
@@ -1455,11 +1459,11 @@ namespace ScaleformUI.Menu
         /// </summary>
         public void UpdateDescription()
         {
-            BeginScaleformMovieMethod(Main.scaleformUI.Handle, "UPDATE_ITEM_DESCRIPTION");
-            ScaleformMovieMethodAddParamInt(Pagination.GetScaleformIndex(CurrentSelection));
-            BeginTextCommandScaleformString($"menu_{BreadcrumbsHandler.CurrentDepth}_desc_{CurrentSelection}");
-            EndTextCommandScaleformString_2();
-            EndScaleformMovieMethod();
+            _natives.BeginScaleformMovieMethod(Main.scaleformUI.Handle, "UPDATE_ITEM_DESCRIPTION");
+            _natives.ScaleformMovieMethodAddParamInt(Pagination.GetScaleformIndex(CurrentSelection));
+            _natives.BeginTextCommandScaleformString($"menu_{BreadcrumbsHandler.CurrentDepth}_desc_{CurrentSelection}");
+            _natives.EndTextCommandScaleformString_2();
+            _natives.EndScaleformMovieMethod();
         }
 
         /// <summary>
@@ -1650,7 +1654,7 @@ namespace ScaleformUI.Menu
             if (!Visible || Main.Warning.IsShowing) return;
             while (!Main.scaleformUI.IsLoaded) await BaseScript.Delay(0);
 
-            HideHudComponentThisFrame(19);
+            _natives.HideHudComponentThisFrame(19);
 
             Controls.Toggle(!ControlDisablingEnabled);
 
@@ -1662,7 +1666,7 @@ namespace ScaleformUI.Menu
                 SizeF _glareSize = new SizeF(1.0f, 1f);
                 PointF gl = new PointF((Offset.X / Screen.Width) + 0.4499f, (Offset.Y / Screen.Height) + 0.449f);
 
-                DrawScaleformMovie(_menuGlare.Handle, gl.X, gl.Y, _glareSize.Width, _glareSize.Height, 255, 255, 255, 255, 0);
+                _natives.DrawScaleformMovie(_menuGlare.Handle, gl.X, gl.Y, _glareSize.Width, _glareSize.Height, 255, 255, 255, 255, 0);
             }
 
             if (IsUsingController)
@@ -1717,13 +1721,13 @@ namespace ScaleformUI.Menu
                 return;
             }
 
-            SetMouseCursorActiveThisFrame();
-            SetInputExclusive(2, 239);
-            SetInputExclusive(2, 240);
-            SetInputExclusive(2, 237);
-            SetInputExclusive(2, 238);
+            _natives.SetMouseCursorActiveThisFrame();
+            _natives.SetInputExclusive(2, 239);
+            _natives.SetInputExclusive(2, 240);
+            _natives.SetInputExclusive(2, 237);
+            _natives.SetInputExclusive(2, 238);
 
-            bool success = GetScaleformMovieCursorSelection(Main.scaleformUI.Handle, ref eventType, ref context, ref itemId, ref unused);
+            bool success = _natives.GetScaleformMovieCursorSelection(Main.scaleformUI.Handle, ref eventType, ref context, ref itemId, ref unused);
 
             if (success && !isBuilding)
             {
@@ -1868,7 +1872,7 @@ namespace ScaleformUI.Menu
                         break;
                     case 7: // on click released ouside
                         cursorPressed = false;
-                        SetMouseCursorSprite(1);
+                        _natives.SetMouseCursorSprite(1);
                         break;
                     case 8: // on not hover
                         cursorPressed = false;
@@ -1876,14 +1880,14 @@ namespace ScaleformUI.Menu
                         {
                             MenuItems[itemId].Hovered = false;
                         }
-                        SetMouseCursorSprite(1);
+                        _natives.SetMouseCursorSprite(1);
                         break;
                     case 9: // on hovered
                         if (context == 0)
                         {
                             MenuItems[itemId].Hovered = true;
                         }
-                        SetMouseCursorSprite(5);
+                        _natives.SetMouseCursorSprite(5);
                         break;
                     case 0: // dragged outside
                         cursorPressed = false;
@@ -1896,10 +1900,10 @@ namespace ScaleformUI.Menu
 
             if (cursorPressed)
             {
-                if (HasSoundFinished(menuSound))
+                if (_natives.HasSoundFinished(menuSound))
                 {
-                    menuSound = GetSoundId();
-                    PlaySoundFrontend(menuSound, "CONTINUOUS_SLIDER", "HUD_FRONTEND_DEFAULT_SOUNDSET", true);
+                    menuSound = _natives.GetSoundId();
+                    _natives.PlaySoundFrontend(menuSound, "CONTINUOUS_SLIDER", "HUD_FRONTEND_DEFAULT_SOUNDSET", true);
                 }
 
                 string res = await Main.scaleformUI.CallFunctionReturnValueString("SET_INPUT_MOUSE_EVENT_CONTINUE");
@@ -1924,22 +1928,22 @@ namespace ScaleformUI.Menu
             }
             else
             {
-                if (!HasSoundFinished(menuSound))
+                if (!_natives.HasSoundFinished(menuSound))
                 {
                     await BaseScript.Delay(1);
-                    StopSound(menuSound);
-                    ReleaseSoundId(menuSound);
+                    _natives.StopSound(menuSound);
+                    _natives.ReleaseSoundId(menuSound);
                 }
             }
 
             if (MouseEdgeEnabled)
             {
-                float mouseVariance = GetDisabledControlNormal(2, 239);
+                float mouseVariance = _natives.GetDisabledControlNormal(2, 239);
                 if (ScreenTools.IsMouseInBounds(new PointF(0, 0), new SizeF(30, 1080)))
                 {
                     if (mouseVariance < (0.05f * 0.75f))
                     {
-                        SetMouseCursorSprite(6);
+                        _natives.SetMouseCursorSprite(6);
                         float mouseSpeed = 0.05f - mouseVariance;
                         if (mouseSpeed > 0.05f) mouseSpeed = 0.05f;
                         GameplayCamera.RelativeHeading += 70 * mouseSpeed;
@@ -1952,17 +1956,17 @@ namespace ScaleformUI.Menu
                         float mouseSpeed = 0.05f - (1f - mouseVariance);
                         if (mouseSpeed > 0.05f) mouseSpeed = 0.05f;
                         GameplayCamera.RelativeHeading -= 70 * mouseSpeed;
-                        SetMouseCursorSprite(7);
+                        _natives.SetMouseCursorSprite(7);
                     }
                 }
                 else
                 {
-                    if (!MenuItems.Any(x => x.Hovered)) SetMouseCursorSprite(1);
+                    if (!MenuItems.Any(x => x.Hovered)) _natives.SetMouseCursorSprite(1);
                 }
             }
             else
             {
-                if (!MenuItems.Any(x => x.Hovered)) SetMouseCursorSprite(1);
+                if (!MenuItems.Any(x => x.Hovered)) _natives.SetMouseCursorSprite(1);
             }
         }
 
@@ -2106,11 +2110,11 @@ namespace ScaleformUI.Menu
                 Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
                 return;
             }
-            BeginScaleformMovieMethod(Main.scaleformUI.Handle, "SET_INPUT_EVENT");
-            ScaleformMovieMethodAddParamInt(10);
-            int ret = EndScaleformMovieMethodReturnValue();
-            while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-            int res = GetScaleformMovieFunctionReturnInt(ret);
+            _natives.BeginScaleformMovieMethod(Main.scaleformUI.Handle, "SET_INPUT_EVENT");
+            _natives.ScaleformMovieMethodAddParamInt(10);
+            int ret = _natives.EndScaleformMovieMethodReturnValue();
+            while (!_natives.IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+            int res = _natives.GetScaleformMovieFunctionReturnInt(ret);
             switch (MenuItems[CurrentSelection])
             {
                 case UIMenuListItem:
@@ -2160,11 +2164,11 @@ namespace ScaleformUI.Menu
                 Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
                 return;
             }
-            BeginScaleformMovieMethod(Main.scaleformUI.Handle, "SET_INPUT_EVENT");
-            ScaleformMovieMethodAddParamInt(11);
-            int ret = EndScaleformMovieMethodReturnValue();
-            while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-            int res = GetScaleformMovieFunctionReturnInt(ret);
+            _natives.BeginScaleformMovieMethod(Main.scaleformUI.Handle, "SET_INPUT_EVENT");
+            _natives.ScaleformMovieMethodAddParamInt(11);
+            int ret = _natives.EndScaleformMovieMethodReturnValue();
+            while (!_natives.IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+            int res = _natives.GetScaleformMovieFunctionReturnInt(ret);
             switch (MenuItems[CurrentSelection])
             {
                 case UIMenuListItem:
@@ -2254,7 +2258,7 @@ namespace ScaleformUI.Menu
                 return;
             }
 
-            if (UpdateOnscreenKeyboard() == 0 || IsWarningMessageActive() || BreadcrumbsHandler.SwitchInProgress || isFading) return;
+            if (_natives.UpdateOnscreenKeyboard() == 0 || _natives.IsWarningMessageActive() || BreadcrumbsHandler.SwitchInProgress || isFading) return;
 
             if (HasControlJustBeenReleased(MenuControls.Back, key))
             {
@@ -2411,7 +2415,7 @@ namespace ScaleformUI.Menu
                 }
                 if (!value) return;
                 if (!ResetCursorOnOpen) return;
-                SetCursorLocation(0.5f, 0.5f);
+                _natives.SetCursorLocation(0.5f, 0.5f);
                 Screen.Hud.CursorSprite = CursorSprite.Normal;
             }
         }
@@ -2424,28 +2428,28 @@ namespace ScaleformUI.Menu
             {
                 EnableAnimation = false;
                 while (!Main.scaleformUI.IsLoaded) await BaseScript.Delay(0);
-                BeginScaleformMovieMethod(Main.scaleformUI.Handle, "CREATE_MENU");
-                PushScaleformMovieMethodParameterString(Title);
-                PushScaleformMovieMethodParameterString(SubtitleColor != HudColor.NONE ? "~" + SubtitleColor + "~" + Subtitle : Subtitle);
-                PushScaleformMovieMethodParameterFloat(Offset.X);
-                PushScaleformMovieMethodParameterFloat(Offset.Y);
-                PushScaleformMovieMethodParameterBool(AlternativeTitle);
-                PushScaleformMovieMethodParameterString(_customTexture.Key);
-                PushScaleformMovieMethodParameterString(_customTexture.Value);
-                PushScaleformMovieFunctionParameterInt(MaxItemsOnScreen);
-                PushScaleformMovieFunctionParameterInt(MenuItems.Count);
-                PushScaleformMovieFunctionParameterBool(EnableAnimation);
-                PushScaleformMovieFunctionParameterInt((int)AnimationType);
-                PushScaleformMovieFunctionParameterInt((int)buildingAnimation);
-                PushScaleformMovieFunctionParameterInt(counterColor.ArgbValue);
-                PushScaleformMovieMethodParameterString(descriptionFont.FontName);
-                PushScaleformMovieFunctionParameterInt(descriptionFont.FontID);
-                PushScaleformMovieMethodParameterFloat(fadingTime);
-                PushScaleformMovieFunctionParameterInt(bannerColor.ArgbValue);
-                PushScaleformMovieFunctionParameterBool(true);
-                BeginTextCommandScaleformString("ScaleformUILongDesc");
-                EndTextCommandScaleformString_2();
-                EndScaleformMovieMethod();
+                _natives.BeginScaleformMovieMethod(Main.scaleformUI.Handle, "CREATE_MENU");
+                _natives.PushScaleformMovieMethodParameterString(Title);
+                _natives.PushScaleformMovieMethodParameterString(SubtitleColor != HudColor.NONE ? "~" + SubtitleColor + "~" + Subtitle : Subtitle);
+                _natives.PushScaleformMovieMethodParameterFloat(Offset.X);
+                _natives.PushScaleformMovieMethodParameterFloat(Offset.Y);
+                _natives.PushScaleformMovieMethodParameterBool(AlternativeTitle);
+                _natives.PushScaleformMovieMethodParameterString(_customTexture.Key);
+                _natives.PushScaleformMovieMethodParameterString(_customTexture.Value);
+                _natives.PushScaleformMovieFunctionParameterInt(MaxItemsOnScreen);
+                _natives.PushScaleformMovieFunctionParameterInt(MenuItems.Count);
+                _natives.PushScaleformMovieFunctionParameterBool(EnableAnimation);
+                _natives.PushScaleformMovieFunctionParameterInt((int)AnimationType);
+                _natives.PushScaleformMovieFunctionParameterInt((int)buildingAnimation);
+                _natives.PushScaleformMovieFunctionParameterInt(counterColor.ArgbValue);
+                _natives.PushScaleformMovieMethodParameterString(descriptionFont.FontName);
+                _natives.PushScaleformMovieFunctionParameterInt(descriptionFont.FontID);
+                _natives.PushScaleformMovieMethodParameterFloat(fadingTime);
+                _natives.PushScaleformMovieFunctionParameterInt(bannerColor.ArgbValue);
+                _natives.PushScaleformMovieFunctionParameterBool(true);
+                _natives.BeginTextCommandScaleformString("ScaleformUILongDesc");
+                _natives.EndTextCommandScaleformString_2();
+                _natives.EndScaleformMovieMethod();
                 await FadeInMenu();
                 isBuilding = false;
                 return;
@@ -2611,7 +2615,7 @@ namespace ScaleformUI.Menu
         {
             if (itemless) throw new("ScaleformUI - You can't compare or sort an itemless menu");
             try
-            { 
+            {
                 MenuItems[CurrentSelection].Selected = false;
                 _unfilteredMenuItems = MenuItems.ToList();
                 Clear();
@@ -2634,7 +2638,7 @@ namespace ScaleformUI.Menu
         public void ResetFilter()
         {
             if (itemless) throw new("ScaleformUI - You can't compare or sort an itemless menu");
-            try 
+            try
             {
                 MenuItems[CurrentSelection].Selected = false;
                 Clear();
@@ -2683,114 +2687,114 @@ namespace ScaleformUI.Menu
             }
 
             UIMenuItem item = MenuItems[menuIndex];
-            AddTextEntry($"menu_{BreadcrumbsHandler.Count}_desc_{menuIndex}", item.Description);
+            _natives.AddTextEntry($"menu_{BreadcrumbsHandler.Count}_desc_{menuIndex}", item.Description);
 
-            BeginScaleformMovieMethod(Main.scaleformUI.Handle, "ADD_ITEM");
-            PushScaleformMovieFunctionParameterBool(before);
-            PushScaleformMovieFunctionParameterInt(item._itemId);
-            PushScaleformMovieFunctionParameterInt(menuIndex);
-            PushScaleformMovieMethodParameterString(item._formatLeftLabel);
+            _natives.BeginScaleformMovieMethod(Main.scaleformUI.Handle, "ADD_ITEM");
+            _natives.PushScaleformMovieFunctionParameterBool(before);
+            _natives.PushScaleformMovieFunctionParameterInt(item._itemId);
+            _natives.PushScaleformMovieFunctionParameterInt(menuIndex);
+            _natives.PushScaleformMovieMethodParameterString(item._formatLeftLabel);
             if (item.DescriptionHash != 0 && string.IsNullOrWhiteSpace(item.Description))
             {
-                BeginTextCommandScaleformString("STRTNM1");
-                AddTextComponentSubstringTextLabelHashKey(item.DescriptionHash);
-                EndTextCommandScaleformString_2();
+                _natives.BeginTextCommandScaleformString("STRTNM1");
+                _natives.AddTextComponentSubstringTextLabelHashKey(item.DescriptionHash);
+                _natives.EndTextCommandScaleformString_2();
             }
             else
             {
-                BeginTextCommandScaleformString($"menu_{BreadcrumbsHandler.Count}_desc_{menuIndex}");
-                EndTextCommandScaleformString_2();
+                _natives.BeginTextCommandScaleformString($"menu_{BreadcrumbsHandler.Count}_desc_{menuIndex}");
+                _natives.EndTextCommandScaleformString_2();
             }
-            PushScaleformMovieFunctionParameterBool(item.Enabled);
-            PushScaleformMovieFunctionParameterBool(item.BlinkDescription);
+            _natives.PushScaleformMovieFunctionParameterBool(item.Enabled);
+            _natives.PushScaleformMovieFunctionParameterBool(item.BlinkDescription);
             switch (item)
             {
                 case UIMenuDynamicListItem:
                     UIMenuDynamicListItem dit = (UIMenuDynamicListItem)item;
-                    PushScaleformMovieMethodParameterString(dit.CurrentListItem);
-                    PushScaleformMovieFunctionParameterInt(0);
-                    PushScaleformMovieFunctionParameterInt(dit.MainColor.ArgbValue);
-                    PushScaleformMovieFunctionParameterInt(dit.HighlightColor.ArgbValue);
-                    PushScaleformMovieFunctionParameterInt(dit.TextColor.ArgbValue);
-                    PushScaleformMovieFunctionParameterInt(dit.HighlightedTextColor.ArgbValue);
-                    EndScaleformMovieMethod();
+                    _natives.PushScaleformMovieMethodParameterString(dit.CurrentListItem);
+                    _natives.PushScaleformMovieFunctionParameterInt(0);
+                    _natives.PushScaleformMovieFunctionParameterInt(dit.MainColor.ArgbValue);
+                    _natives.PushScaleformMovieFunctionParameterInt(dit.HighlightColor.ArgbValue);
+                    _natives.PushScaleformMovieFunctionParameterInt(dit.TextColor.ArgbValue);
+                    _natives.PushScaleformMovieFunctionParameterInt(dit.HighlightedTextColor.ArgbValue);
+                    _natives.EndScaleformMovieMethod();
                     break;
                 case UIMenuListItem:
                     UIMenuListItem it = (UIMenuListItem)item;
                     string joinedList = string.Join(",", it.Items.Cast<string>().Select(x =>
                         x = !it.Enabled ? x.ReplaceRstarColorsWith("~c~") : it.Selected ? (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~w~", "~l~").Replace("~s~", "~l~") : (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~l~", "~s~")
                     ));
-                    AddTextEntry($"listitem_{menuIndex}_list", joinedList);
-                    BeginTextCommandScaleformString($"listitem_{menuIndex}_list");
-                    EndTextCommandScaleformString();
-                    PushScaleformMovieFunctionParameterInt(it.Index);
-                    PushScaleformMovieFunctionParameterInt(it.MainColor.ArgbValue);
-                    PushScaleformMovieFunctionParameterInt(it.HighlightColor.ArgbValue);
-                    PushScaleformMovieFunctionParameterInt(it.TextColor.ArgbValue);
-                    PushScaleformMovieFunctionParameterInt(it.HighlightedTextColor.ArgbValue);
-                    EndScaleformMovieMethod();
+                    _natives.AddTextEntry($"listitem_{menuIndex}_list", joinedList);
+                    _natives.BeginTextCommandScaleformString($"listitem_{menuIndex}_list");
+                    _natives.EndTextCommandScaleformString();
+                    _natives.PushScaleformMovieFunctionParameterInt(it.Index);
+                    _natives.PushScaleformMovieFunctionParameterInt(it.MainColor.ArgbValue);
+                    _natives.PushScaleformMovieFunctionParameterInt(it.HighlightColor.ArgbValue);
+                    _natives.PushScaleformMovieFunctionParameterInt(it.TextColor.ArgbValue);
+                    _natives.PushScaleformMovieFunctionParameterInt(it.HighlightedTextColor.ArgbValue);
+                    _natives.EndScaleformMovieMethod();
                     break;
                 case UIMenuCheckboxItem:
                     UIMenuCheckboxItem check = (UIMenuCheckboxItem)item;
-                    PushScaleformMovieFunctionParameterInt((int)check.Style);
-                    PushScaleformMovieMethodParameterBool(check.Checked);
-                    PushScaleformMovieFunctionParameterInt(check.MainColor.ArgbValue);
-                    PushScaleformMovieFunctionParameterInt(check.HighlightColor.ArgbValue);
-                    PushScaleformMovieFunctionParameterInt(check.TextColor.ArgbValue);
-                    PushScaleformMovieFunctionParameterInt(check.HighlightedTextColor.ArgbValue);
-                    EndScaleformMovieMethod();
+                    _natives.PushScaleformMovieFunctionParameterInt((int)check.Style);
+                    _natives.PushScaleformMovieMethodParameterBool(check.Checked);
+                    _natives.PushScaleformMovieFunctionParameterInt(check.MainColor.ArgbValue);
+                    _natives.PushScaleformMovieFunctionParameterInt(check.HighlightColor.ArgbValue);
+                    _natives.PushScaleformMovieFunctionParameterInt(check.TextColor.ArgbValue);
+                    _natives.PushScaleformMovieFunctionParameterInt(check.HighlightedTextColor.ArgbValue);
+                    _natives.EndScaleformMovieMethod();
                     break;
                 case UIMenuSliderItem:
                     UIMenuSliderItem prItem = (UIMenuSliderItem)item;
-                    PushScaleformMovieFunctionParameterInt(prItem._max);
-                    PushScaleformMovieFunctionParameterInt(prItem._multiplier);
-                    PushScaleformMovieFunctionParameterInt(prItem.Value);
-                    PushScaleformMovieFunctionParameterInt(prItem.MainColor.ArgbValue);
-                    PushScaleformMovieFunctionParameterInt(prItem.HighlightColor.ArgbValue);
-                    PushScaleformMovieFunctionParameterInt(prItem.TextColor.ArgbValue);
-                    PushScaleformMovieFunctionParameterInt(prItem.HighlightedTextColor.ArgbValue);
-                    PushScaleformMovieFunctionParameterInt(prItem.SliderColor.ArgbValue);
-                    PushScaleformMovieFunctionParameterBool(prItem._heritage);
-                    EndScaleformMovieMethod();
+                    _natives.PushScaleformMovieFunctionParameterInt(prItem._max);
+                    _natives.PushScaleformMovieFunctionParameterInt(prItem._multiplier);
+                    _natives.PushScaleformMovieFunctionParameterInt(prItem.Value);
+                    _natives.PushScaleformMovieFunctionParameterInt(prItem.MainColor.ArgbValue);
+                    _natives.PushScaleformMovieFunctionParameterInt(prItem.HighlightColor.ArgbValue);
+                    _natives.PushScaleformMovieFunctionParameterInt(prItem.TextColor.ArgbValue);
+                    _natives.PushScaleformMovieFunctionParameterInt(prItem.HighlightedTextColor.ArgbValue);
+                    _natives.PushScaleformMovieFunctionParameterInt(prItem.SliderColor.ArgbValue);
+                    _natives.PushScaleformMovieFunctionParameterBool(prItem._heritage);
+                    _natives.EndScaleformMovieMethod();
                     break;
                 case UIMenuProgressItem:
                     UIMenuProgressItem slItem = (UIMenuProgressItem)item;
-                    PushScaleformMovieFunctionParameterInt(slItem._max);
-                    PushScaleformMovieFunctionParameterInt(slItem._multiplier);
-                    PushScaleformMovieFunctionParameterInt(slItem.Value);
-                    PushScaleformMovieFunctionParameterInt(slItem.MainColor.ArgbValue);
-                    PushScaleformMovieFunctionParameterInt(slItem.HighlightColor.ArgbValue);
-                    PushScaleformMovieFunctionParameterInt(slItem.TextColor.ArgbValue);
-                    PushScaleformMovieFunctionParameterInt(slItem.HighlightedTextColor.ArgbValue);
-                    PushScaleformMovieFunctionParameterInt(slItem.SliderColor.ArgbValue);
-                    EndScaleformMovieMethod();
+                    _natives.PushScaleformMovieFunctionParameterInt(slItem._max);
+                    _natives.PushScaleformMovieFunctionParameterInt(slItem._multiplier);
+                    _natives.PushScaleformMovieFunctionParameterInt(slItem.Value);
+                    _natives.PushScaleformMovieFunctionParameterInt(slItem.MainColor.ArgbValue);
+                    _natives.PushScaleformMovieFunctionParameterInt(slItem.HighlightColor.ArgbValue);
+                    _natives.PushScaleformMovieFunctionParameterInt(slItem.TextColor.ArgbValue);
+                    _natives.PushScaleformMovieFunctionParameterInt(slItem.HighlightedTextColor.ArgbValue);
+                    _natives.PushScaleformMovieFunctionParameterInt(slItem.SliderColor.ArgbValue);
+                    _natives.EndScaleformMovieMethod();
                     break;
                 case UIMenuStatsItem:
                     UIMenuStatsItem statsItem = (UIMenuStatsItem)item;
-                    PushScaleformMovieFunctionParameterInt(statsItem.Value);
-                    PushScaleformMovieFunctionParameterInt(statsItem.Type);
-                    PushScaleformMovieFunctionParameterInt(statsItem.Color.ArgbValue);
-                    PushScaleformMovieFunctionParameterInt(statsItem.MainColor.ArgbValue);
-                    PushScaleformMovieFunctionParameterInt(statsItem.HighlightColor.ArgbValue);
-                    PushScaleformMovieFunctionParameterInt(statsItem.TextColor.ArgbValue);
-                    PushScaleformMovieFunctionParameterInt(statsItem.HighlightedTextColor.ArgbValue);
-                    EndScaleformMovieMethod();
+                    _natives.PushScaleformMovieFunctionParameterInt(statsItem.Value);
+                    _natives.PushScaleformMovieFunctionParameterInt(statsItem.Type);
+                    _natives.PushScaleformMovieFunctionParameterInt(statsItem.Color.ArgbValue);
+                    _natives.PushScaleformMovieFunctionParameterInt(statsItem.MainColor.ArgbValue);
+                    _natives.PushScaleformMovieFunctionParameterInt(statsItem.HighlightColor.ArgbValue);
+                    _natives.PushScaleformMovieFunctionParameterInt(statsItem.TextColor.ArgbValue);
+                    _natives.PushScaleformMovieFunctionParameterInt(statsItem.HighlightedTextColor.ArgbValue);
+                    _natives.EndScaleformMovieMethod();
                     break;
                 case UIMenuSeparatorItem:
                     UIMenuSeparatorItem separatorItem = (UIMenuSeparatorItem)item;
-                    PushScaleformMovieFunctionParameterBool(separatorItem.Jumpable);
-                    PushScaleformMovieFunctionParameterInt(item.MainColor.ArgbValue);
-                    PushScaleformMovieFunctionParameterInt(item.HighlightColor.ArgbValue);
-                    PushScaleformMovieFunctionParameterInt(item.TextColor.ArgbValue);
-                    PushScaleformMovieFunctionParameterInt(item.HighlightedTextColor.ArgbValue);
-                    EndScaleformMovieMethod();
+                    _natives.PushScaleformMovieFunctionParameterBool(separatorItem.Jumpable);
+                    _natives.PushScaleformMovieFunctionParameterInt(item.MainColor.ArgbValue);
+                    _natives.PushScaleformMovieFunctionParameterInt(item.HighlightColor.ArgbValue);
+                    _natives.PushScaleformMovieFunctionParameterInt(item.TextColor.ArgbValue);
+                    _natives.PushScaleformMovieFunctionParameterInt(item.HighlightedTextColor.ArgbValue);
+                    _natives.EndScaleformMovieMethod();
                     break;
                 default:
-                    PushScaleformMovieFunctionParameterInt(item.MainColor.ArgbValue);
-                    PushScaleformMovieFunctionParameterInt(item.HighlightColor.ArgbValue);
-                    PushScaleformMovieFunctionParameterInt(item.TextColor.ArgbValue);
-                    PushScaleformMovieFunctionParameterInt(item.HighlightedTextColor.ArgbValue);
-                    EndScaleformMovieMethod();
+                    _natives.PushScaleformMovieFunctionParameterInt(item.MainColor.ArgbValue);
+                    _natives.PushScaleformMovieFunctionParameterInt(item.HighlightColor.ArgbValue);
+                    _natives.PushScaleformMovieFunctionParameterInt(item.TextColor.ArgbValue);
+                    _natives.PushScaleformMovieFunctionParameterInt(item.HighlightedTextColor.ArgbValue);
+                    _natives.EndScaleformMovieMethod();
                     Main.scaleformUI.CallFunction("SET_RIGHT_LABEL", scaleformIndex, item._formatRightLabel);
                     if (item.RightBadge != BadgeIcon.NONE)
                         Main.scaleformUI.CallFunction("SET_RIGHT_BADGE", scaleformIndex, (int)item.RightBadge);
@@ -2899,7 +2903,7 @@ namespace ScaleformUI.Menu
         /// <summary>
         /// Returns false if last input was made with mouse and keyboard, true if it was made with a controller.
         /// </summary>
-        public static bool IsUsingController => !IsInputDisabled(2);
+        public static bool IsUsingController => !Main.GetNativesHandler().IsInputDisabled(2);
 
 
         /// <summary>

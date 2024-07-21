@@ -1,5 +1,4 @@
 ﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
 using ScaleformUI.Menu;
 using ScaleformUI.PauseMenus;
 using ScaleformUI.PauseMenus.Elements;
@@ -163,7 +162,7 @@ namespace ScaleformUI.LobbyMenu
             if (listCol[f].Type != "players")
             {
                 if (PlayersColumn != null && PlayersColumn.Items.Count > 0 && !PlayersColumn.Items[PlayersColumn.CurrentSelection].KeepPanelVisible)
-                    API.ClearPedInPauseMenu();
+                    Natives.ClearPedInPauseMenu();
             }
             focusLevel = f;
             if (listCol[focusLevel].Type == "panel" || listCol[focusLevel].Type == "minimap")

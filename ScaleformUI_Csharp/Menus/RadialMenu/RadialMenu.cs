@@ -4,8 +4,8 @@ using ScaleformUI.Elements;
 using ScaleformUI.Menu;
 using ScaleformUI.Menus;
 using ScaleformUI.Scaleforms;
+using ScaleformUI.Scaleforms.ScaleformUI.Interfaces;
 using System.Drawing;
-using static CitizenFX.Core.Native.API;
 
 namespace ScaleformUI.Radial
 {
@@ -17,6 +17,8 @@ namespace ScaleformUI.Radial
 
     public class RadialMenu : MenuBase
     {
+        private readonly IRageNatives _natives;
+
         private bool visible;
         private int currentSelection;
         private float oldAngle;
@@ -71,7 +73,10 @@ namespace ScaleformUI.Radial
             }
         }
 
-        public RadialMenu() : this(default) { }
+        public RadialMenu() : this(default)
+        {
+            _natives = Main.GetNativesHandler();
+        }
 
         public RadialMenu(PointF offset)
         {
@@ -140,8 +145,8 @@ namespace ScaleformUI.Radial
             Game.DisableControlThisFrame(0, Control.LookUpDown);
 
             // take mouse/gamepad LStick
-            float x = (float)Math.Floor(GetDisabledControlNormal(2, 13) * 1000);
-            float y = (float)Math.Floor(GetDisabledControlNormal(2, 12) * 1000);
+            float x = (float)Math.Floor(_natives.GetDisabledControlNormal(2, 13) * 1000);
+            float y = (float)Math.Floor(_natives.GetDisabledControlNormal(2, 12) * 1000);
 
             // math.atan2 returns 0 when mouse/gamepad LStick move right, because y=0 and x is not negative..
             // as a workaround.. i set y = 1, this way left is checked correctly

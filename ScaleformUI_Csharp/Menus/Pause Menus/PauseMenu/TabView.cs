@@ -5,7 +5,6 @@ using ScaleformUI.PauseMenus;
 using ScaleformUI.PauseMenus.Elements.Items;
 using ScaleformUI.PauseMenus.Elements.Panels;
 using ScaleformUI.Scaleforms;
-using static CitizenFX.Core.Native.API;
 
 namespace ScaleformUI.PauseMenu
 {
@@ -134,10 +133,10 @@ namespace ScaleformUI.PauseMenu
                 Game.IsPaused = value;
                 if (value)
                 {
-                    ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_CORONA"), true, -1);
+                    Natives.ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_CORONA"), true, -1);
                     doScreenBlur();
                     Main.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
-                    SetPlayerControl(Game.Player.Handle, false, 0);
+                    Natives.SetPlayerControl(Game.Player.Handle, false, 0);
                     isBuilding = true;
                     ShowHeader();
                     foreach (BaseTab tab in Tabs)
@@ -155,26 +154,26 @@ namespace ScaleformUI.PauseMenu
                         t.Minimap?.Dispose();
                     else if (Tabs[Index] is GalleryTab g)
                         g.Minimap?.Dispose();
-                    AnimpostfxStop("PauseMenuIn");
-                    AnimpostfxPlay("PauseMenuOut", 0, false);
+                    Natives.AnimpostfxStop("PauseMenuIn");
+                    Natives.AnimpostfxPlay("PauseMenuOut", 0, false);
                     SendPauseMenuClose();
-                    SetPlayerControl(Game.Player.Handle, true, 0);
+                    Natives.SetPlayerControl(Game.Player.Handle, true, 0);
                     MenuHandler.currentBase = null;
                     Main.InstructionalButtons.ClearButtonList();
                     _pause.Dispose();
-                    ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_CORONA"), false, -1);
+                    Natives.ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_CORONA"), false, -1);
                 }
             }
         }
 
         private async void doScreenBlur()
         {
-            while (AnimpostfxIsRunning("PauseMenuOut"))
+            while (Natives.AnimpostfxIsRunning("PauseMenuOut"))
             {
                 await BaseScript.Delay(0);
-                AnimpostfxStop("PauseMenuOut");
+                Natives.AnimpostfxStop("PauseMenuOut");
             }
-            AnimpostfxPlay("PauseMenuIn", 0, true);
+            Natives.AnimpostfxPlay("PauseMenuIn", 0, true);
         }
 
         public int Index
@@ -237,8 +236,8 @@ namespace ScaleformUI.PauseMenu
         public void BuildPauseMenu()
         {
             isBuilding = true;
-            if (!HasStreamedTextureDictLoaded("commonmenu"))
-                RequestStreamedTextureDict("commonmenu", true);
+            if (!Natives.HasStreamedTextureDictLoaded("commonmenu"))
+                Natives.RequestStreamedTextureDict("commonmenu", true);
             BaseTab tab = Tabs[Index];
             switch (tab._type)
             {
@@ -338,7 +337,7 @@ namespace ScaleformUI.PauseMenu
                                         break;
                                     case KeymapItem:
                                         KeymapItem ki = ii as KeymapItem;
-                                        if (IsUsingKeyboard(2))
+                                        if (Natives.IsUsingKeyboard(2))
                                             _pause.AddKeymapItem(j, ki.Label, ki.PrimaryKeyboard, ki.SecondaryKeyboard);
                                         else
                                             _pause.AddKeymapItem(j, ki.Label, ki.PrimaryGamepad, ki.SecondaryGamepad);
@@ -592,7 +591,7 @@ namespace ScaleformUI.PauseMenu
 
         private void UpdateKeymapItems()
         {
-            if (!IsUsingKeyboard(2))
+            if (!Natives.IsUsingKeyboard(2))
             {
                 if (!controller)
                 {
@@ -665,7 +664,7 @@ namespace ScaleformUI.PauseMenu
                                 break;
                         }
                         if (pl.listCol.Any(x => x.Type == "players"))
-                            SetPauseMenuPedLighting(FocusLevel != 0);
+                            Natives.SetPauseMenuPedLighting(FocusLevel != 0);
                     }
                     else if (Tabs[Index] is GalleryTab gT)
                     {
@@ -679,12 +678,12 @@ namespace ScaleformUI.PauseMenu
                         else if (!string.IsNullOrEmpty(gT.GalleryItems[gT.currentIndex].RightPanelDescription))
                         {
                             gT.Minimap.Enabled = false;
-                            AddTextEntry("gallerytab_desc", gT.GalleryItems[gT.currentIndex].RightPanelDescription);
+                            Natives.AddTextEntry("gallerytab_desc", gT.GalleryItems[gT.currentIndex].RightPanelDescription);
                             _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
-                            BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
-                            BeginTextCommandScaleformString("gallerytab_desc");
-                            EndTextCommandScaleformString_2();
-                            EndScaleformMovieMethod();
+                            Natives.BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
+                            Natives.BeginTextCommandScaleformString("gallerytab_desc");
+                            Natives.EndTextCommandScaleformString_2();
+                            Natives.EndScaleformMovieMethod();
                         }
                         else
                         {
@@ -745,12 +744,12 @@ namespace ScaleformUI.PauseMenu
                                 else if (!string.IsNullOrEmpty(gT.GalleryItems[gT.currentIndex].RightPanelDescription))
                                 {
                                     gT.Minimap.Enabled = false;
-                                    AddTextEntry("gallerytab_desc", gT.GalleryItems[gT.currentIndex].RightPanelDescription);
+                                    Natives.AddTextEntry("gallerytab_desc", gT.GalleryItems[gT.currentIndex].RightPanelDescription);
                                     _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
-                                    BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
-                                    BeginTextCommandScaleformString("gallerytab_desc");
-                                    EndTextCommandScaleformString_2();
-                                    EndScaleformMovieMethod();
+                                    Natives.BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
+                                    Natives.BeginTextCommandScaleformString("gallerytab_desc");
+                                    Natives.EndTextCommandScaleformString_2();
+                                    Natives.EndScaleformMovieMethod();
                                 }
                                 else
                                 {
@@ -884,12 +883,12 @@ namespace ScaleformUI.PauseMenu
                             else if (!string.IsNullOrEmpty(gT.GalleryItems[gT.currentIndex].RightPanelDescription))
                             {
                                 gT.Minimap.Enabled = false;
-                                AddTextEntry("gallerytab_desc", gT.GalleryItems[gT.currentIndex].RightPanelDescription);
+                                Natives.AddTextEntry("gallerytab_desc", gT.GalleryItems[gT.currentIndex].RightPanelDescription);
                                 _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
-                                BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
-                                BeginTextCommandScaleformString("gallerytab_desc");
-                                EndTextCommandScaleformString_2();
-                                EndScaleformMovieMethod();
+                                Natives.BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
+                                Natives.BeginTextCommandScaleformString("gallerytab_desc");
+                                Natives.EndTextCommandScaleformString_2();
+                                Natives.EndScaleformMovieMethod();
                             }
                             else
                             {
@@ -918,7 +917,7 @@ namespace ScaleformUI.PauseMenu
                     if (pl._newStyle)
                     {
                         FocusLevel--;
-                        SetPauseMenuPedLighting(FocusLevel != 0);
+                        Natives.SetPauseMenuPedLighting(FocusLevel != 0);
                         if (pl.listCol.Any(x => x.Type == "settings"))
                             pl.SettingsColumn.Items[pl.SettingsColumn.CurrentSelection].Selected = false;
                         if (pl.listCol.Any(x => x.Type == "players"))
@@ -939,7 +938,7 @@ namespace ScaleformUI.PauseMenu
                                     break;
                                 case "players":
                                     pl.PlayersColumn.Items[pl.PlayersColumn.CurrentSelection].Selected = false;
-                                    ClearPedInPauseMenu();
+                                    Natives.ClearPedInPauseMenu();
                                     break;
                                 case "missions":
                                     pl.MissionsColumn.Items[pl.MissionsColumn.CurrentSelection].Selected = false;
@@ -1031,12 +1030,12 @@ namespace ScaleformUI.PauseMenu
                     }
                     else if (!string.IsNullOrEmpty(it.RightPanelDescription))
                     {
-                        AddTextEntry("gallerytab_desc", it.RightPanelDescription);
+                        Natives.AddTextEntry("gallerytab_desc", it.RightPanelDescription);
                         _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
-                        BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
-                        BeginTextCommandScaleformString("gallerytab_desc");
-                        EndTextCommandScaleformString_2();
-                        EndScaleformMovieMethod();
+                        Natives.BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
+                        Natives.BeginTextCommandScaleformString("gallerytab_desc");
+                        Natives.EndTextCommandScaleformString_2();
+                        Natives.EndScaleformMovieMethod();
                     }
                     else
                     {
@@ -1129,12 +1128,12 @@ namespace ScaleformUI.PauseMenu
                     }
                     else if (!string.IsNullOrEmpty(it.RightPanelDescription))
                     {
-                        AddTextEntry("gallerytab_desc", it.RightPanelDescription);
+                        Natives.AddTextEntry("gallerytab_desc", it.RightPanelDescription);
                         _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
-                        BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
-                        BeginTextCommandScaleformString("gallerytab_desc");
-                        EndTextCommandScaleformString_2();
-                        EndScaleformMovieMethod();
+                        Natives.BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
+                        Natives.BeginTextCommandScaleformString("gallerytab_desc");
+                        Natives.EndTextCommandScaleformString_2();
+                        Natives.EndScaleformMovieMethod();
                     }
                     else
                     {
@@ -1257,12 +1256,12 @@ namespace ScaleformUI.PauseMenu
                     }
                     else if (!string.IsNullOrEmpty(it.RightPanelDescription))
                     {
-                        AddTextEntry("gallerytab_desc", it.RightPanelDescription);
+                        Natives.AddTextEntry("gallerytab_desc", it.RightPanelDescription);
                         _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
-                        BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
-                        BeginTextCommandScaleformString("gallerytab_desc");
-                        EndTextCommandScaleformString_2();
-                        EndScaleformMovieMethod();
+                        Natives.BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
+                        Natives.BeginTextCommandScaleformString("gallerytab_desc");
+                        Natives.EndTextCommandScaleformString_2();
+                        Natives.EndScaleformMovieMethod();
                     }
                     else
                     {
@@ -1279,7 +1278,7 @@ namespace ScaleformUI.PauseMenu
             switch (FocusLevel)
             {
                 case 0:
-                    ClearPedInPauseMenu();
+                    Natives.ClearPedInPauseMenu();
                     _pause.HeaderGoLeft();
                     if (Tabs[Index] is SubmenuTab)
                     {
@@ -1308,14 +1307,14 @@ namespace ScaleformUI.PauseMenu
                                 if (_plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].ClonePed != null)
                                     _plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].CreateClonedPed();
                                 else
-                                    ClearPedInPauseMenu();
+                                    Natives.ClearPedInPauseMenu();
                             }
                             else
                             {
-                                ClearPedInPauseMenu();
+                                Natives.ClearPedInPauseMenu();
                             }
                         }
-                        else ClearPedInPauseMenu();
+                        else Natives.ClearPedInPauseMenu();
                     }
                     break;
                 case 1:
@@ -1521,12 +1520,12 @@ namespace ScaleformUI.PauseMenu
                     }
                     else if (!string.IsNullOrEmpty(it.RightPanelDescription))
                     {
-                        AddTextEntry("gallerytab_desc", it.RightPanelDescription);
+                        Natives.AddTextEntry("gallerytab_desc", it.RightPanelDescription);
                         _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
-                        BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
-                        BeginTextCommandScaleformString("gallerytab_desc");
-                        EndTextCommandScaleformString_2();
-                        EndScaleformMovieMethod();
+                        Natives.BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
+                        Natives.BeginTextCommandScaleformString("gallerytab_desc");
+                        Natives.EndTextCommandScaleformString_2();
+                        Natives.EndScaleformMovieMethod();
                     }
                     else
                     {
@@ -1543,7 +1542,7 @@ namespace ScaleformUI.PauseMenu
             switch (FocusLevel)
             {
                 case 0:
-                    ClearPedInPauseMenu();
+                    Natives.ClearPedInPauseMenu();
                     _pause.HeaderGoRight();
                     if (Tabs[Index] is SubmenuTab)
                     {
@@ -1572,12 +1571,12 @@ namespace ScaleformUI.PauseMenu
                                 if (_plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].ClonePed != null)
                                     _plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].CreateClonedPed();
                                 else
-                                    ClearPedInPauseMenu();
+                                    Natives.ClearPedInPauseMenu();
                             }
                             else
-                                ClearPedInPauseMenu();
+                                Natives.ClearPedInPauseMenu();
                         }
-                        else ClearPedInPauseMenu();
+                        else Natives.ClearPedInPauseMenu();
                     }
                     break;
                 case 1:
@@ -1693,18 +1692,18 @@ namespace ScaleformUI.PauseMenu
 
         public override async void ProcessMouse()
         {
-            if (!IsUsingKeyboard(2))
+            if (!Natives.IsUsingKeyboard(2))
             {
                 return;
             }
             // check for is using keyboard (2) to use Mouse or not.
-            SetMouseCursorActiveThisFrame();
-            SetInputExclusive(2, 239);
-            SetInputExclusive(2, 240);
-            SetInputExclusive(2, 237);
-            SetInputExclusive(2, 238);
+            Natives.SetMouseCursorActiveThisFrame();
+            Natives.SetInputExclusive(2, 239);
+            Natives.SetInputExclusive(2, 240);
+            Natives.SetInputExclusive(2, 237);
+            Natives.SetInputExclusive(2, 238);
 
-            bool successHeader = GetScaleformMovieCursorSelection(Main.PauseMenu._header.Handle, ref eventType, ref context, ref itemId, ref unused);
+            bool successHeader = Natives.GetScaleformMovieCursorSelection(Main.PauseMenu._header.Handle, ref eventType, ref context, ref itemId, ref unused);
             if (successHeader)
             {
                 switch (eventType)
@@ -1721,10 +1720,10 @@ namespace ScaleformUI.PauseMenu
                                     if (tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection].ClonePed != null)
                                         tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection].CreateClonedPed();
                                     else
-                                        ClearPedInPauseMenu();
+                                        Natives.ClearPedInPauseMenu();
                                 }
                                 else
-                                    ClearPedInPauseMenu();
+                                    Natives.ClearPedInPauseMenu();
                                 if (Tabs[Index] is GalleryTab g)
                                 {
                                     GalleryItem it = g.GalleryItems[g.currentIndex];
@@ -1737,12 +1736,12 @@ namespace ScaleformUI.PauseMenu
                                     }
                                     else if (!string.IsNullOrEmpty(it.RightPanelDescription))
                                     {
-                                        AddTextEntry("gallerytab_desc", it.RightPanelDescription);
+                                        Natives.AddTextEntry("gallerytab_desc", it.RightPanelDescription);
                                         _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
-                                        BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
-                                        BeginTextCommandScaleformString("gallerytab_desc");
-                                        EndTextCommandScaleformString_2();
-                                        EndScaleformMovieMethod();
+                                        Natives.BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
+                                        Natives.BeginTextCommandScaleformString("gallerytab_desc");
+                                        Natives.EndTextCommandScaleformString_2();
+                                        Natives.EndScaleformMovieMethod();
                                     }
                                     else
                                     {
@@ -1781,7 +1780,7 @@ namespace ScaleformUI.PauseMenu
                 }
             }
 
-            bool successPause = GetScaleformMovieCursorSelection(Main.PauseMenu._pause.Handle, ref eventType, ref context, ref itemId, ref unused);
+            bool successPause = Natives.GetScaleformMovieCursorSelection(Main.PauseMenu._pause.Handle, ref eventType, ref context, ref itemId, ref unused);
             if (successPause)
             {
                 switch (eventType)
@@ -1824,12 +1823,12 @@ namespace ScaleformUI.PauseMenu
                             else if (!string.IsNullOrEmpty(it.RightPanelDescription))
                             {
                                 g.Minimap.Enabled = false;
-                                AddTextEntry("gallerytab_desc", it.RightPanelDescription);
+                                Natives.AddTextEntry("gallerytab_desc", it.RightPanelDescription);
                                 _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
-                                BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
-                                BeginTextCommandScaleformString("gallerytab_desc");
-                                EndTextCommandScaleformString_2();
-                                EndScaleformMovieMethod();
+                                Natives.BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
+                                Natives.BeginTextCommandScaleformString("gallerytab_desc");
+                                Natives.EndTextCommandScaleformString_2();
+                                Natives.EndScaleformMovieMethod();
                             }
                             else
                             {
@@ -1926,7 +1925,7 @@ namespace ScaleformUI.PauseMenu
                                             break;
                                     }
                                     if (_tab.listCol.Any(x => x.Type == "players"))
-                                        SetPauseMenuPedLighting(FocusLevel != 0);
+                                        Natives.SetPauseMenuPedLighting(FocusLevel != 0);
                                 }
                                 break;
                             case 1: // left item in subitem tab pressed or playerListTab item selected
@@ -2122,12 +2121,12 @@ namespace ScaleformUI.PauseMenu
                 GoLeft();
             else if (Game.IsControlJustPressed(2, Control.PhoneRight))
                 GoRight();
-            else if (Game.IsControlJustPressed(2, Control.FrontendLb) || (Game.IsControlJustPressed(2, (Control)192) && Game.IsControlPressed(2, Control.Sprint) && IsUsingKeyboard(2)))
+            else if (Game.IsControlJustPressed(2, Control.FrontendLb) || (Game.IsControlJustPressed(2, (Control)192) && Game.IsControlPressed(2, Control.Sprint) && Natives.IsUsingKeyboard(2)))
             {
                 if (FocusLevel > 0) GoBack();
                 GoLeft();
             }
-            else if (Game.IsControlJustPressed(2, Control.FrontendRb) || (Game.IsControlJustPressed(2, (Control)192) && IsUsingKeyboard(2)))
+            else if (Game.IsControlJustPressed(2, Control.FrontendRb) || (Game.IsControlJustPressed(2, (Control)192) && Natives.IsUsingKeyboard(2)))
             {
                 if (FocusLevel > 0) GoBack();
                 GoRight();
@@ -2144,7 +2143,7 @@ namespace ScaleformUI.PauseMenu
             else if (Game.IsControlJustPressed(1, Control.CursorScrollDown))
                 _pause.SendScrollEvent(1);
 
-            if (Game.IsControlPressed(2, Control.LookUpOnly) && !IsUsingKeyboard(2))
+            if (Game.IsControlPressed(2, Control.LookUpOnly) && !Natives.IsUsingKeyboard(2))
             {
                 if (Main.GameTime - _timer > 175)
                 {
@@ -2152,7 +2151,7 @@ namespace ScaleformUI.PauseMenu
                     _timer = Main.GameTime;
                 }
             }
-            else if (Game.IsControlPressed(2, Control.LookDownOnly) && !IsUsingKeyboard(2))
+            else if (Game.IsControlPressed(2, Control.LookDownOnly) && !Natives.IsUsingKeyboard(2))
             {
                 if (Main.GameTime - _timer > 175)
                 {

@@ -1,11 +1,12 @@
 ﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
+using ScaleformUI.Scaleforms.ScaleformUI.Interfaces;
 using System.Drawing;
 
 namespace ScaleformUI.Menu
 {
     public class UIMenuPercentagePanel : UIMenuPanel
     {
+        private readonly IRageNatives _natives;
 
         public string Min { get; set; }
         public string Max { get; set; }
@@ -31,6 +32,8 @@ namespace ScaleformUI.Menu
 
         public UIMenuPercentagePanel(string title, string MinText = "0%", string MaxText = "100%", float initialValue = 0)
         {
+            _natives = Main.GetNativesHandler();
+
             Min = MinText;
             Max = MaxText;
             Title = !string.IsNullOrWhiteSpace(title) ? title : "Opacity";
@@ -59,13 +62,13 @@ namespace ScaleformUI.Menu
         {
             int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(ParentItem));
             int van = ParentItem.Panels.IndexOf(this);
-            API.BeginScaleformMovieMethod(Main.scaleformUI.Handle, "SET_PERCENT_PANEL_POSITION_RETURN_VALUE");
-            API.ScaleformMovieMethodAddParamInt(it);
-            API.ScaleformMovieMethodAddParamInt(van);
-            API.ScaleformMovieMethodAddParamFloat(mouse.X);
-            int ret = API.EndScaleformMovieMethodReturnValue();
-            while (!API.IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-            _value = Convert.ToSingle(API.GetScaleformMovieMethodReturnValueString(ret));
+            _natives.BeginScaleformMovieMethod(Main.scaleformUI.Handle, "SET_PERCENT_PANEL_POSITION_RETURN_VALUE");
+            _natives.ScaleformMovieMethodAddParamInt(it);
+            _natives.ScaleformMovieMethodAddParamInt(van);
+            _natives.ScaleformMovieMethodAddParamFloat(mouse.X);
+            int ret = _natives.EndScaleformMovieMethodReturnValue();
+            while (!_natives.IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+            _value = Convert.ToSingle(_natives.GetScaleformMovieMethodReturnValueString(ret));
         }
 
         internal void PercentagePanelChange()
