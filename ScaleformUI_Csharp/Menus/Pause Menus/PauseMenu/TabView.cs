@@ -115,8 +115,8 @@ namespace ScaleformUI.PauseMenu
             TemporarilyHidden = false;
             InstructionalButtons = new()
             {
-                new InstructionalButton(Control.PhoneSelect, UIMenu._selectTextLocalized),
-                new InstructionalButton(Control.PhoneCancel, UIMenu._backTextLocalized),
+                new InstructionalButton(GameControl.PhoneSelect, UIMenu._selectTextLocalized),
+                new InstructionalButton(GameControl.PhoneCancel, UIMenu._backTextLocalized),
                 new InstructionalButton(InputGroup.INPUTGROUP_FRONTEND_BUMPERS, _browseTextLocalized),
             };
             _pause = Main.PauseMenu;

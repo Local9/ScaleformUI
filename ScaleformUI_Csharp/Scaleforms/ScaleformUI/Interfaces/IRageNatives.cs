@@ -1,7 +1,14 @@
-﻿namespace ScaleformUI.Scaleforms.ScaleformUI.Interfaces
+﻿using ScaleformUI.Elements;
+using System.Drawing;
+
+namespace ScaleformUI.Scaleforms.ScaleformUI.Interfaces
 {
     public interface IRageNatives
     {
+        public float ScreenWidth { get; }
+        public float ScreenHeight { get; }
+        public float GameplayCameraRelativeHeading { get; set; }
+        public GameCursorSprite CursorSprite { get; set; }
         public void RequestHudScaleform(int hudComponent);
         public bool HasHudScaleformLoaded(int hudComponent);
         public int RequestScaleformMovieInstance(string handle);
@@ -78,6 +85,8 @@
         public void CallMinimapScaleformFunction(int handle, string fnName);
         public void ScaleformMovieMethodAddParamTextureNameString(string textureDict);
         public void ScaleformMovieMethodAddParamFloat(float value);
+        public void PlaySound(string audioName, string audioRef);
+        public void PlaySoundFrontend(string audioName, string audioRef);
         public void PlaySoundFrontend(int soundId, string audioName, string audioRef, bool p3);
         public void RequestScriptAudioBank(string audioBank, bool p2);
         public void ThefeedCommentTeleportPoolOn();
@@ -85,6 +94,7 @@
         public int PlayerPedId();
         public float GetDisabledControlNormal(int inputGroup, int control);
         public void HideHudComponentThisFrame(int hudComponent);
+        public void HideHudComponentThisFrame(GameHudComponent hudComponent);
         public void SetMouseCursorSprite(int spriteId);
         public bool HasSoundFinished(int soundId);
         public int GetSoundId();
@@ -172,6 +182,21 @@
         public void RegisterFontFile(string gfxName);
         public int RegisterFontId(string name);
         public void EnableControlAction(int inputGroup, int control, bool enable);
-
+        public bool IsControlJustPressed(int inputGroup, GameControl control);
+        public void ShowCursorThisFrame();
+        public void ShowLoadingPrompt(string text, int type);
+        public void ShowLoadingPrompt(string text, GameLoadingSpinnerType type);
+        public void HideLoadingPrompt();
+        public string GetControlInstructionalButton(int inputGroup, GameControl control);
+        public Size GetScreenResolution();
+        public void EnableControlThisFrame(int inputGroup, GameControl control);
+        public void EnableControlThisFrame(int inputGroup, int control);
+        public bool IsControlJustReleased(int inputGroup, GameControl control);
+        public bool IsControlJustReleased(int inputGroup, int control);
+        public bool IsControlPressed(int inputGroup, GameControl control);
+        public bool IsControlPressed(int inputGroup, int control);
+        public string GetGXTEntry(string entry);
+        public void DisableControlThisFrame(int inputGroup, GameControl control);
+        public void DisableControlThisFrame(int inputGroup, int control);
     }
 }

@@ -94,8 +94,8 @@ namespace ScaleformUI.Radial
             };
             InstructionalButtons = new List<InstructionalButton>()
             {
-                new InstructionalButton(Control.PhoneSelect, UIMenu._selectTextLocalized),
-                new InstructionalButton(Control.PhoneCancel, UIMenu._backTextLocalized)
+                new InstructionalButton(GameControl.PhoneSelect, UIMenu._selectTextLocalized),
+                new InstructionalButton(GameControl.PhoneCancel, UIMenu._backTextLocalized)
             };
         }
 

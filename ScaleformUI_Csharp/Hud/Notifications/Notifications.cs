@@ -328,7 +328,7 @@ namespace ScaleformUI
         /// </summary>
         /// <param name="label"></param>
         /// <param name="busySpinner"></param>
-        public static void StartLoadingMessage(string label, LoadingSpinnerType busySpinner = LoadingSpinnerType.SocialClubSaving, int savingTime = -1)
+        public static void StartLoadingMessage(string label, GameLoadingSpinnerType busySpinner = GameLoadingSpinnerType.SocialClubSaving, int savingTime = -1)
         {
             IRageNatives natives = Main.GetNativesHandler();
             string textOutput = Game.GetGXTEntry(label);

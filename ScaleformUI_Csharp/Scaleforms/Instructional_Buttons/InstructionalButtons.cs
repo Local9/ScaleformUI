@@ -1,7 +1,6 @@
-﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
-using CitizenFX.Core.UI;
+﻿using ScaleformUI.Elements;
 using ScaleformUI.Menu;
+using ScaleformUI.Scaleforms.ScaleformUI.Interfaces;
 using System.Drawing;
 
 namespace ScaleformUI.Scaleforms
@@ -53,17 +52,19 @@ namespace ScaleformUI.Scaleforms
     public delegate void OnInstructionControlSelected(InstructionalButton control);
     public class InstructionalButton
     {
+        private readonly IRageNatives _natives;
+
         public event OnInstructionControlSelected OnControlSelected;
         public string Text { get; set; }
-        public bool IsUsingController => !API.IsUsingKeyboard(2);
+        public bool IsUsingController => !Main.GetNativesHandler().IsUsingKeyboard(2);
 
         public UIMenuItem ItemBind { get; private set; }
 
-        public Control GamepadButton { get; private set; }
-        public Control KeyboardButton { get; private set; }
+        public GameControl GamepadButton { get; private set; }
+        public GameControl KeyboardButton { get; private set; }
         public InputGroup InputButton { get; private set; } = InputGroup.UNUSED;
-        public List<Control> GamepadButtons { get; private set; }
-        public List<Control> KeyboardButtons { get; private set; }
+        public List<GameControl> GamepadButtons { get; private set; }
+        public List<GameControl> KeyboardButtons { get; private set; }
         public PadCheck PadCheck { get; private set; }
 
         /// <summary>
@@ -73,8 +74,9 @@ namespace ScaleformUI.Scaleforms
         /// <param name="control">Control that gets converted into a button.</param>
         /// <param name="text">Help text that goes with the button.</param>
         /// <param name="padFilter">Filter to show only with GamePad or Keyoboard (default both).</param>
-        public InstructionalButton(Control control, string text, PadCheck padFilter = PadCheck.Any)
+        public InstructionalButton(GameControl control, string text, PadCheck padFilter = PadCheck.Any)
         {
+            _natives = Main.GetNativesHandler();
             Text = text;
             PadCheck = padFilter;
             if (padFilter == PadCheck.Controller)
@@ -94,7 +96,7 @@ namespace ScaleformUI.Scaleforms
         /// <param name="controls">List of controls that get converted into a single button</param>
         /// <param name="text">Help text that goes with the button.</param>
         /// <param name="padFilter">Filter to show only with GamePad or Keyoboard (default both).</param>
-        public InstructionalButton(List<Control> controls, string text, PadCheck padFilter = PadCheck.Any)
+        public InstructionalButton(List<GameControl> controls, string text, PadCheck padFilter = PadCheck.Any)
         {
             if (padFilter == PadCheck.Controller)
                 GamepadButtons = controls;
@@ -115,7 +117,7 @@ namespace ScaleformUI.Scaleforms
         /// <param name="gamepadControl">The control that will be shown if using the GamePad</param>
         /// <param name="keyboardControl">The control that will be shown if using the Keyboard</param>
         /// <param name="text">Help text that goes with the button.</param>
-        public InstructionalButton(Control gamepadControl, Control keyboardControl, string text)
+        public InstructionalButton(GameControl gamepadControl, GameControl keyboardControl, string text)
         {
             Text = text;
             GamepadButton = gamepadControl;
@@ -129,7 +131,7 @@ namespace ScaleformUI.Scaleforms
         /// <param name="gamepadControl">The list of controls that will be shown if using the GamePad</param>
         /// <param name="keyboardControl">The list of controls that will be shown if using the Keyboard</param>
         /// <param name="text">Help text that goes with the button.</param>
-        public InstructionalButton(List<Control> gamepadControls, List<Control> keyboardControls, string text)
+        public InstructionalButton(List<GameControl> gamepadControls, List<GameControl> keyboardControls, string text)
         {
             Text = text;
             GamepadButtons = gamepadControls;
@@ -169,9 +171,9 @@ namespace ScaleformUI.Scaleforms
                     for (int i = GamepadButtons.Count - 1; i > -1; i--)
                     {
                         if (i == 0)
-                            retVal += API.GetControlInstructionalButton(2, (int)GamepadButtons[i], 1);
+                            retVal += _natives.GetControlInstructionalButton(2, GamepadButtons[i]);
                         else
-                            retVal += API.GetControlInstructionalButton(2, (int)GamepadButtons[i], 1) + "%";
+                            retVal += _natives.GetControlInstructionalButton(2, GamepadButtons[i]) + "%";
                     }
                 }
                 else
@@ -179,27 +181,28 @@ namespace ScaleformUI.Scaleforms
                     for (int i = KeyboardButtons.Count - 1; i > -1; i--)
                     {
                         if (i == 0)
-                            retVal += API.GetControlInstructionalButton(2, (int)KeyboardButtons[i], 1);
+                            retVal += _natives.GetControlInstructionalButton(2, KeyboardButtons[i]);
                         else
-                            retVal += API.GetControlInstructionalButton(2, (int)KeyboardButtons[i], 1) + "%";
+                            retVal += _natives.GetControlInstructionalButton(2, KeyboardButtons[i]) + "%";
                     }
                 }
                 return retVal;
             }
             else if (InputButton != InputGroup.UNUSED) return $"~{InputButton}~";
 
-            return IsUsingController ? API.GetControlInstructionalButton(2, (int)GamepadButton, 1) : API.GetControlInstructionalButton(0, (int)KeyboardButton, 1);
+            return IsUsingController ? _natives.GetControlInstructionalButton(2, GamepadButton) : _natives.GetControlInstructionalButton(0, KeyboardButton);
         }
 
         public void InvokeEvent(InstructionalButton control)
         {
-            if (API.UpdateOnscreenKeyboard() == 0) return;
+            if (_natives.UpdateOnscreenKeyboard() == 0) return;
             OnControlSelected?.Invoke(control);
         }
     }
 
     public class InstructionalButtonsScaleform
     {
+        private static IRageNatives _natives => Main.GetNativesHandler();
         internal ScaleformWideScreen _sc;
         private bool _useMouseButtons;
         internal bool _isUsingKeyboard;
@@ -235,8 +238,8 @@ namespace ScaleformUI.Scaleforms
             _sc = new ScaleformWideScreen("INSTRUCTIONAL_BUTTONS");
             int timeout = 1000;
             int start = Main.GameTime;
-            while (!_sc.IsLoaded && Main.GameTime - start < timeout) await BaseScript.Delay(0);
-            Size res = Screen.Resolution;
+            while (!_sc.IsLoaded && Main.GameTime - start < timeout) await Task.Delay(0);
+            Size res = _natives.GetScreenResolution();
             _sc.CallFunction("SET_DISPLAY_CONFIG", 1280, 720, 0.05f, 0.95f, 0.05f, 0.95f, true, false, false, res.Width, res.Height);
         }
 
@@ -318,14 +321,14 @@ namespace ScaleformUI.Scaleforms
         /// <param name="spinnerType">The type of Spinner to show</param>
         /// <param name="text">The text of the Button</param>
         /// <param name="time">Duration of the Button</param>
-        public async void AddSavingText(LoadingSpinnerType spinnerType, string text, int time)
+        public async void AddSavingText(GameLoadingSpinnerType spinnerType, string text, int time)
         {
             _isSaving = true;
             _changed = true;
             savingTimer = Main.GameTime;
-            Screen.LoadingPrompt.Show(text, spinnerType);
-            while (Main.GameTime - savingTimer <= time) await BaseScript.Delay(100);
-            Screen.LoadingPrompt.Hide();
+            _natives.ShowLoadingPrompt(text, spinnerType);
+            while (Main.GameTime - savingTimer <= time) await Task.Delay(100);
+            _natives.HideLoadingPrompt();
             _isSaving = false;
         }
 
@@ -334,12 +337,12 @@ namespace ScaleformUI.Scaleforms
         /// </summary>
         /// <param name="spinnerType">The type of Spinner to show</param>
         /// <param name="text">The text of the Button</param>
-        public void AddSavingText(LoadingSpinnerType spinnerType, string text)
+        public void AddSavingText(GameLoadingSpinnerType spinnerType, string text)
         {
             _isSaving = true;
             _changed = true;
             savingTimer = Main.GameTime;
-            Screen.LoadingPrompt.Show(text, spinnerType);
+            _natives.ShowLoadingPrompt(text, spinnerType);
         }
 
         /// <summary>
@@ -349,7 +352,7 @@ namespace ScaleformUI.Scaleforms
         {
             if (_isSaving)
             {
-                Screen.LoadingPrompt.Hide();
+                _natives.HideLoadingPrompt();
                 _isSaving = false;
             }
         }
@@ -402,7 +405,7 @@ namespace ScaleformUI.Scaleforms
         /// </summary>
         public void Draw()
         {
-            API.SetScriptGfxDrawBehindPausemenu(true);
+            _natives.SetScriptGfxDrawBehindPausemenu(true);
             _sc.Render2D();
         }
 
@@ -412,14 +415,14 @@ namespace ScaleformUI.Scaleforms
         /// <param name="Position">the values for variation must be in 0.000 (One thousandth) decimal places for precision</param>
         public void Draw(PointF Position)
         {
-            API.DrawScaleformMovie(_sc.Handle, 0.5f - Position.X, 0.5f - Position.Y, 1f, 1f, 255, 255, 255, 255, 0);
+            _natives.DrawScaleformMovie(_sc.Handle, 0.5f - Position.X, 0.5f - Position.Y, 1f, 1f, 255, 255, 255, 255, 0);
         }
 
         internal void Update()
         {
             if (ControlButtons.Count == 0) return;
             if (_sc == null) Load();
-            if (API.IsUsingKeyboard(2))
+            if (_natives.IsUsingKeyboard(2))
             {
                 if (!_isUsingKeyboard)
                 {
@@ -450,13 +453,13 @@ namespace ScaleformUI.Scaleforms
                 if (IsControlJustPressed(button.GamepadButton, button.PadCheck) || (button.GamepadButtons != null && button.GamepadButtons.Any(x => IsControlJustPressed(x, button.PadCheck))))
                     button.InvokeEvent(button);
             }
-            if (_useMouseButtons) Screen.Hud.ShowCursorThisFrame();
-            Screen.Hud.HideComponentThisFrame(HudComponent.VehicleName);
-            Screen.Hud.HideComponentThisFrame(HudComponent.AreaName);
-            Screen.Hud.HideComponentThisFrame(HudComponent.StreetName);
+            if (_useMouseButtons) _natives.ShowCursorThisFrame();
+            _natives.HideHudComponentThisFrame(GameHudComponent.VehicleName);
+            _natives.HideHudComponentThisFrame(GameHudComponent.AreaName);
+            _natives.HideHudComponentThisFrame(GameHudComponent.StreetName);
         }
 
-        public static bool IsControlJustPressed(Control control, PadCheck keyboardOnly = PadCheck.Any) => Game.IsControlJustPressed(2, control) && (keyboardOnly == PadCheck.Keyboard ? API.IsUsingKeyboard(2) : keyboardOnly != PadCheck.Controller || !API.IsUsingKeyboard(2));
+        public static bool IsControlJustPressed(GameControl control, PadCheck keyboardOnly = PadCheck.Any) => _natives.IsControlJustPressed(2, control) && (keyboardOnly == PadCheck.Keyboard ? _natives.IsUsingKeyboard(2) : keyboardOnly != PadCheck.Controller || !_natives.IsUsingKeyboard(2));
 
         /// <summary>
         /// Updates the instructional button.

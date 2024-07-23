@@ -1,4 +1,5 @@
 ﻿using CitizenFX.Core;
+using ScaleformUI.Elements;
 using ScaleformUI.Menu;
 using ScaleformUI.PauseMenus;
 using ScaleformUI.PauseMenus.Elements;
@@ -79,8 +80,8 @@ namespace ScaleformUI.LobbyMenu
             TemporarilyHidden = false;
             InstructionalButtons = new()
             {
-                new InstructionalButton(Control.PhoneSelect, UIMenu._selectTextLocalized),
-                new InstructionalButton(Control.PhoneCancel, UIMenu._backTextLocalized),
+                new InstructionalButton(GameControl.PhoneSelect, UIMenu._selectTextLocalized),
+                new InstructionalButton(GameControl.PhoneCancel, UIMenu._backTextLocalized),
             };
             _newStyle = newStyle;
             _pause = Main.PauseMenu;

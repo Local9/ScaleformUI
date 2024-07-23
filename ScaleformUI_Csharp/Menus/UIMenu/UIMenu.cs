@@ -1,796 +1,13 @@
-using CitizenFX.Core;
-using CitizenFX.Core.UI;
 using ScaleformUI.Elements;
 using ScaleformUI.Menus;
 using ScaleformUI.Scaleforms;
 using ScaleformUI.Scaleforms.ScaleformUI.Interfaces;
 using System.Drawing;
-using Control = CitizenFX.Core.Control;
 
 namespace ScaleformUI.Menu
 {
+
     #region Delegates
-    public enum Keys
-    {
-        //
-        // Summary:
-        //     The bitmask to extract modifiers from a key value.
-        Modifiers = -65536,
-        //
-        // Summary:
-        //     No key pressed.
-        None = 0,
-        //
-        // Summary:
-        //     The left mouse button.
-        LButton = 1,
-        //
-        // Summary:
-        //     The right mouse button.
-        RButton = 2,
-        //
-        // Summary:
-        //     The CANCEL key.
-        Cancel = 3,
-        //
-        // Summary:
-        //     The middle mouse button (three-button mouse).
-        MButton = 4,
-        //
-        // Summary:
-        //     The first x mouse button (five-button mouse).
-        XButton1 = 5,
-        //
-        // Summary:
-        //     The second x mouse button (five-button mouse).
-        XButton2 = 6,
-        //
-        // Summary:
-        //     The BACKSPACE key.
-        Back = 8,
-        //
-        // Summary:
-        //     The TAB key.
-        Tab = 9,
-        //
-        // Summary:
-        //     The LINEFEED key.
-        LineFeed = 10,
-        //
-        // Summary:
-        //     The CLEAR key.
-        Clear = 12,
-        //
-        // Summary:
-        //     The RETURN key.
-        Return = 13,
-        //
-        // Summary:
-        //     The ENTER key.
-        Enter = 13,
-        //
-        // Summary:
-        //     The SHIFT key.
-        ShiftKey = 16,
-        //
-        // Summary:
-        //     The CTRL key.
-        ControlKey = 17,
-        //
-        // Summary:
-        //     The ALT key.
-        Menu = 18,
-        //
-        // Summary:
-        //     The PAUSE key.
-        Pause = 19,
-        //
-        // Summary:
-        //     The CAPS LOCK key.
-        Capital = 20,
-        //
-        // Summary:
-        //     The CAPS LOCK key.
-        CapsLock = 20,
-        //
-        // Summary:
-        //     The IME Kana mode key.
-        KanaMode = 21,
-        //
-        // Summary:
-        //     The IME Hanguel mode key. (maintained for compatibility; use HangulMode)
-        HanguelMode = 21,
-        //
-        // Summary:
-        //     The IME Hangul mode key.
-        HangulMode = 21,
-        //
-        // Summary:
-        //     The IME Junja mode key.
-        JunjaMode = 23,
-        //
-        // Summary:
-        //     The IME final mode key.
-        FinalMode = 24,
-        //
-        // Summary:
-        //     The IME Hanja mode key.
-        HanjaMode = 25,
-        //
-        // Summary:
-        //     The IME Kanji mode key.
-        KanjiMode = 25,
-        //
-        // Summary:
-        //     The ESC key.
-        Escape = 27,
-        //
-        // Summary:
-        //     The IME convert key.
-        IMEConvert = 28,
-        //
-        // Summary:
-        //     The IME nonconvert key.
-        IMENonconvert = 29,
-        //
-        // Summary:
-        //     The IME accept key, replaces System.Windows.Forms.Keys.IMEAceept.
-        IMEAccept = 30,
-        //
-        // Summary:
-        //     The IME accept key. Obsolete, use System.Windows.Forms.Keys.IMEAccept instead.
-        IMEAceept = 30,
-        //
-        // Summary:
-        //     The IME mode change key.
-        IMEModeChange = 31,
-        //
-        // Summary:
-        //     The SPACEBAR key.
-        Space = 32,
-        //
-        // Summary:
-        //     The PAGE UP key.
-        Prior = 33,
-        //
-        // Summary:
-        //     The PAGE UP key.
-        PageUp = 33,
-        //
-        // Summary:
-        //     The PAGE DOWN key.
-        Next = 34,
-        //
-        // Summary:
-        //     The PAGE DOWN key.
-        PageDown = 34,
-        //
-        // Summary:
-        //     The END key.
-        End = 35,
-        //
-        // Summary:
-        //     The HOME key.
-        Home = 36,
-        //
-        // Summary:
-        //     The LEFT ARROW key.
-        Left = 37,
-        //
-        // Summary:
-        //     The UP ARROW key.
-        Up = 38,
-        //
-        // Summary:
-        //     The RIGHT ARROW key.
-        Right = 39,
-        //
-        // Summary:
-        //     The DOWN ARROW key.
-        Down = 40,
-        //
-        // Summary:
-        //     The SELECT key.
-        Select = 41,
-        //
-        // Summary:
-        //     The PRINT key.
-        Print = 42,
-        //
-        // Summary:
-        //     The EXECUTE key.
-        Execute = 43,
-        //
-        // Summary:
-        //     The PRINT SCREEN key.
-        Snapshot = 44,
-        //
-        // Summary:
-        //     The PRINT SCREEN key.
-        PrintScreen = 44,
-        //
-        // Summary:
-        //     The INS key.
-        Insert = 45,
-        //
-        // Summary:
-        //     The DEL key.
-        Delete = 46,
-        //
-        // Summary:
-        //     The HELP key.
-        Help = 47,
-        //
-        // Summary:
-        //     The 0 key.
-        D0 = 48,
-        //
-        // Summary:
-        //     The 1 key.
-        D1 = 49,
-        //
-        // Summary:
-        //     The 2 key.
-        D2 = 50,
-        //
-        // Summary:
-        //     The 3 key.
-        D3 = 51,
-        //
-        // Summary:
-        //     The 4 key.
-        D4 = 52,
-        //
-        // Summary:
-        //     The 5 key.
-        D5 = 53,
-        //
-        // Summary:
-        //     The 6 key.
-        D6 = 54,
-        //
-        // Summary:
-        //     The 7 key.
-        D7 = 55,
-        //
-        // Summary:
-        //     The 8 key.
-        D8 = 56,
-        //
-        // Summary:
-        //     The 9 key.
-        D9 = 57,
-        //
-        // Summary:
-        //     The A key.
-        A = 65,
-        //
-        // Summary:
-        //     The B key.
-        B = 66,
-        //
-        // Summary:
-        //     The C key.
-        C = 67,
-        //
-        // Summary:
-        //     The D key.
-        D = 68,
-        //
-        // Summary:
-        //     The E key.
-        E = 69,
-        //
-        // Summary:
-        //     The F key.
-        F = 70,
-        //
-        // Summary:
-        //     The G key.
-        G = 71,
-        //
-        // Summary:
-        //     The H key.
-        H = 72,
-        //
-        // Summary:
-        //     The I key.
-        I = 73,
-        //
-        // Summary:
-        //     The J key.
-        J = 74,
-        //
-        // Summary:
-        //     The K key.
-        K = 75,
-        //
-        // Summary:
-        //     The L key.
-        L = 76,
-        //
-        // Summary:
-        //     The M key.
-        M = 77,
-        //
-        // Summary:
-        //     The N key.
-        N = 78,
-        //
-        // Summary:
-        //     The O key.
-        O = 79,
-        //
-        // Summary:
-        //     The P key.
-        P = 80,
-        //
-        // Summary:
-        //     The Q key.
-        Q = 81,
-        //
-        // Summary:
-        //     The R key.
-        R = 82,
-        //
-        // Summary:
-        //     The S key.
-        S = 83,
-        //
-        // Summary:
-        //     The T key.
-        T = 84,
-        //
-        // Summary:
-        //     The U key.
-        U = 85,
-        //
-        // Summary:
-        //     The V key.
-        V = 86,
-        //
-        // Summary:
-        //     The W key.
-        W = 87,
-        //
-        // Summary:
-        //     The X key.
-        X = 88,
-        //
-        // Summary:
-        //     The Y key.
-        Y = 89,
-        //
-        // Summary:
-        //     The Z key.
-        Z = 90,
-        //
-        // Summary:
-        //     The left Windows logo key (Microsoft Natural Keyboard).
-        LWin = 91,
-        //
-        // Summary:
-        //     The right Windows logo key (Microsoft Natural Keyboard).
-        RWin = 92,
-        //
-        // Summary:
-        //     The application key (Microsoft Natural Keyboard).
-        Apps = 93,
-        //
-        // Summary:
-        //     The computer sleep key.
-        Sleep = 95,
-        //
-        // Summary:
-        //     The 0 key on the numeric keypad.
-        NumPad0 = 96,
-        //
-        // Summary:
-        //     The 1 key on the numeric keypad.
-        NumPad1 = 97,
-        //
-        // Summary:
-        //     The 2 key on the numeric keypad.
-        NumPad2 = 98,
-        //
-        // Summary:
-        //     The 3 key on the numeric keypad.
-        NumPad3 = 99,
-        //
-        // Summary:
-        //     The 4 key on the numeric keypad.
-        NumPad4 = 100,
-        //
-        // Summary:
-        //     The 5 key on the numeric keypad.
-        NumPad5 = 101,
-        //
-        // Summary:
-        //     The 6 key on the numeric keypad.
-        NumPad6 = 102,
-        //
-        // Summary:
-        //     The 7 key on the numeric keypad.
-        NumPad7 = 103,
-        //
-        // Summary:
-        //     The 8 key on the numeric keypad.
-        NumPad8 = 104,
-        //
-        // Summary:
-        //     The 9 key on the numeric keypad.
-        NumPad9 = 105,
-        //
-        // Summary:
-        //     The multiply key.
-        Multiply = 106,
-        //
-        // Summary:
-        //     The add key.
-        Add = 107,
-        //
-        // Summary:
-        //     The separator key.
-        Separator = 108,
-        //
-        // Summary:
-        //     The subtract key.
-        Subtract = 109,
-        //
-        // Summary:
-        //     The decimal key.
-        Decimal = 110,
-        //
-        // Summary:
-        //     The divide key.
-        Divide = 111,
-        //
-        // Summary:
-        //     The F1 key.
-        F1 = 112,
-        //
-        // Summary:
-        //     The F2 key.
-        F2 = 113,
-        //
-        // Summary:
-        //     The F3 key.
-        F3 = 114,
-        //
-        // Summary:
-        //     The F4 key.
-        F4 = 115,
-        //
-        // Summary:
-        //     The F5 key.
-        F5 = 116,
-        //
-        // Summary:
-        //     The F6 key.
-        F6 = 117,
-        //
-        // Summary:
-        //     The F7 key.
-        F7 = 118,
-        //
-        // Summary:
-        //     The F8 key.
-        F8 = 119,
-        //
-        // Summary:
-        //     The F9 key.
-        F9 = 120,
-        //
-        // Summary:
-        //     The F10 key.
-        F10 = 121,
-        //
-        // Summary:
-        //     The F11 key.
-        F11 = 122,
-        //
-        // Summary:
-        //     The F12 key.
-        F12 = 123,
-        //
-        // Summary:
-        //     The F13 key.
-        F13 = 124,
-        //
-        // Summary:
-        //     The F14 key.
-        F14 = 125,
-        //
-        // Summary:
-        //     The F15 key.
-        F15 = 126,
-        //
-        // Summary:
-        //     The F16 key.
-        F16 = 127,
-        //
-        // Summary:
-        //     The F17 key.
-        F17 = 128,
-        //
-        // Summary:
-        //     The F18 key.
-        F18 = 129,
-        //
-        // Summary:
-        //     The F19 key.
-        F19 = 130,
-        //
-        // Summary:
-        //     The F20 key.
-        F20 = 131,
-        //
-        // Summary:
-        //     The F21 key.
-        F21 = 132,
-        //
-        // Summary:
-        //     The F22 key.
-        F22 = 133,
-        //
-        // Summary:
-        //     The F23 key.
-        F23 = 134,
-        //
-        // Summary:
-        //     The F24 key.
-        F24 = 135,
-        //
-        // Summary:
-        //     The NUM LOCK key.
-        NumLock = 144,
-        //
-        // Summary:
-        //     The SCROLL LOCK key.
-        Scroll = 145,
-        //
-        // Summary:
-        //     The left SHIFT key.
-        LShiftKey = 160,
-        //
-        // Summary:
-        //     The right SHIFT key.
-        RShiftKey = 161,
-        //
-        // Summary:
-        //     The left CTRL key.
-        LControlKey = 162,
-        //
-        // Summary:
-        //     The right CTRL key.
-        RControlKey = 163,
-        //
-        // Summary:
-        //     The left ALT key.
-        LMenu = 164,
-        //
-        // Summary:
-        //     The right ALT key.
-        RMenu = 165,
-        //
-        // Summary:
-        //     The browser back key (Windows 2000 or later).
-        BrowserBack = 166,
-        //
-        // Summary:
-        //     The browser forward key (Windows 2000 or later).
-        BrowserForward = 167,
-        //
-        // Summary:
-        //     The browser refresh key (Windows 2000 or later).
-        BrowserRefresh = 168,
-        //
-        // Summary:
-        //     The browser stop key (Windows 2000 or later).
-        BrowserStop = 169,
-        //
-        // Summary:
-        //     The browser search key (Windows 2000 or later).
-        BrowserSearch = 170,
-        //
-        // Summary:
-        //     The browser favorites key (Windows 2000 or later).
-        BrowserFavorites = 171,
-        //
-        // Summary:
-        //     The browser home key (Windows 2000 or later).
-        BrowserHome = 172,
-        //
-        // Summary:
-        //     The volume mute key (Windows 2000 or later).
-        VolumeMute = 173,
-        //
-        // Summary:
-        //     The volume down key (Windows 2000 or later).
-        VolumeDown = 174,
-        //
-        // Summary:
-        //     The volume up key (Windows 2000 or later).
-        VolumeUp = 175,
-        //
-        // Summary:
-        //     The media next track key (Windows 2000 or later).
-        MediaNextTrack = 176,
-        //
-        // Summary:
-        //     The media previous track key (Windows 2000 or later).
-        MediaPreviousTrack = 177,
-        //
-        // Summary:
-        //     The media Stop key (Windows 2000 or later).
-        MediaStop = 178,
-        //
-        // Summary:
-        //     The media play pause key (Windows 2000 or later).
-        MediaPlayPause = 179,
-        //
-        // Summary:
-        //     The launch mail key (Windows 2000 or later).
-        LaunchMail = 180,
-        //
-        // Summary:
-        //     The select media key (Windows 2000 or later).
-        SelectMedia = 181,
-        //
-        // Summary:
-        //     The start application one key (Windows 2000 or later).
-        LaunchApplication1 = 182,
-        //
-        // Summary:
-        //     The start application two key (Windows 2000 or later).
-        LaunchApplication2 = 183,
-        //
-        // Summary:
-        //     The OEM Semicolon key on a US standard keyboard (Windows 2000 or later).
-        OemSemicolon = 186,
-        //
-        // Summary:
-        //     The OEM 1 key.
-        Oem1 = 186,
-        //
-        // Summary:
-        //     The OEM plus key on any country/region keyboard (Windows 2000 or later).
-        Oemplus = 187,
-        //
-        // Summary:
-        //     The OEM comma key on any country/region keyboard (Windows 2000 or later).
-        Oemcomma = 188,
-        //
-        // Summary:
-        //     The OEM minus key on any country/region keyboard (Windows 2000 or later).
-        OemMinus = 189,
-        //
-        // Summary:
-        //     The OEM period key on any country/region keyboard (Windows 2000 or later).
-        OemPeriod = 190,
-        //
-        // Summary:
-        //     The OEM question mark key on a US standard keyboard (Windows 2000 or later).
-        OemQuestion = 191,
-        //
-        // Summary:
-        //     The OEM 2 key.
-        Oem2 = 191,
-        //
-        // Summary:
-        //     The OEM tilde key on a US standard keyboard (Windows 2000 or later).
-        Oemtilde = 192,
-        //
-        // Summary:
-        //     The OEM 3 key.
-        Oem3 = 192,
-        //
-        // Summary:
-        //     The OEM open bracket key on a US standard keyboard (Windows 2000 or later).
-        OemOpenBrackets = 219,
-        //
-        // Summary:
-        //     The OEM 4 key.
-        Oem4 = 219,
-        //
-        // Summary:
-        //     The OEM pipe key on a US standard keyboard (Windows 2000 or later).
-        OemPipe = 220,
-        //
-        // Summary:
-        //     The OEM 5 key.
-        Oem5 = 220,
-        //
-        // Summary:
-        //     The OEM close bracket key on a US standard keyboard (Windows 2000 or later).
-        OemCloseBrackets = 221,
-        //
-        // Summary:
-        //     The OEM 6 key.
-        Oem6 = 221,
-        //
-        // Summary:
-        //     The OEM singled/double quote key on a US standard keyboard (Windows 2000 or later).
-        OemQuotes = 222,
-        //
-        // Summary:
-        //     The OEM 7 key.
-        Oem7 = 222,
-        //
-        // Summary:
-        //     The OEM 8 key.
-        Oem8 = 223,
-        //
-        // Summary:
-        //     The OEM angle bracket or backslash key on the RT 102 key keyboard (Windows 2000
-        //     or later).
-        OemBackslash = 226,
-        //
-        // Summary:
-        //     The OEM 102 key.
-        Oem102 = 226,
-        //
-        // Summary:
-        //     The PROCESS KEY key.
-        ProcessKey = 229,
-        //
-        // Summary:
-        //     Used to pass Unicode characters as if they were keystrokes. The Packet key value
-        //     is the low word of a 32-bit virtual-key value used for non-keyboard input methods.
-        Packet = 231,
-        //
-        // Summary:
-        //     The ATTN key.
-        Attn = 246,
-        //
-        // Summary:
-        //     The CRSEL key.
-        Crsel = 247,
-        //
-        // Summary:
-        //     The EXSEL key.
-        Exsel = 248,
-        //
-        // Summary:
-        //     The ERASE EOF key.
-        EraseEof = 249,
-        //
-        // Summary:
-        //     The PLAY key.
-        Play = 250,
-        //
-        // Summary:
-        //     The ZOOM key.
-        Zoom = 251,
-        //
-        // Summary:
-        //     A constant reserved for future use.
-        NoName = 252,
-        //
-        // Summary:
-        //     The PA1 key.
-        Pa1 = 253,
-        //
-        // Summary:
-        //     The CLEAR key.
-        OemClear = 254,
-        //
-        // Summary:
-        //     The bitmask to extract a key code from a key value.
-        KeyCode = 65535,
-        //
-        // Summary:
-        //     The SHIFT modifier key.
-        Shift = 65536,
-        //
-        // Summary:
-        //     The CTRL modifier key.
-        Control = 131072,
-        //
-        // Summary:
-        //     The ALT modifier key.
-        Alt = 262144
-    }
 
     public delegate void IndexChangedEvent(UIMenu sender, int newIndex);
     public delegate void ListChangedEvent(UIMenu sender, UIMenuListItem listItem, int newIndex);
@@ -880,8 +97,8 @@ namespace ScaleformUI.Menu
         private bool _changed = true;
         private bool keyboard = false;
         //Keys
-        private readonly Dictionary<MenuControls, Tuple<List<Keys>, List<Tuple<Control, int>>>> _keyDictionary =
-            new Dictionary<MenuControls, Tuple<List<Keys>, List<Tuple<Control, int>>>>();
+        private readonly Dictionary<MenuControls, Tuple<List<Keys>, List<Tuple<GameControl, int>>>> _keyDictionary =
+            new Dictionary<MenuControls, Tuple<List<Keys>, List<Tuple<GameControl, int>>>>();
 
         private readonly ScaleformWideScreen _menuGlare;
 
@@ -895,8 +112,8 @@ namespace ScaleformUI.Menu
 
         public bool Glare { get; set; }
 
-        internal readonly static string _selectTextLocalized = Game.GetGXTEntry("HUD_INPUT2");
-        internal readonly static string _backTextLocalized = Game.GetGXTEntry("HUD_INPUT3");
+        internal readonly static string _selectTextLocalized = Main.GetNativesHandler().GetGXTEntry("HUD_INPUT2");
+        internal readonly static string _backTextLocalized = Main.GetNativesHandler().GetGXTEntry("HUD_INPUT3");
         protected readonly SizeF Resolution = ScreenTools.ResolutionMaintainRatio;
 
         // Button delay
@@ -1006,15 +223,15 @@ namespace ScaleformUI.Menu
                 mouseWheelControlEnabled = value;
                 if (value)
                 {
-                    SetKey(MenuControls.Up, Control.CursorScrollUp);
-                    SetKey(MenuControls.Down, Control.CursorScrollDown);
+                    SetKey(MenuControls.Up, GameControl.CursorScrollUp);
+                    SetKey(MenuControls.Down, GameControl.CursorScrollDown);
                 }
                 else
                 {
                     ResetKey(MenuControls.Up);
                     ResetKey(MenuControls.Down);
-                    SetKey(MenuControls.Up, Control.PhoneUp);
-                    SetKey(MenuControls.Down, Control.PhoneDown);
+                    SetKey(MenuControls.Up, GameControl.PhoneUp);
+                    SetKey(MenuControls.Down, GameControl.PhoneDown);
                 }
             }
         }
@@ -1179,20 +396,20 @@ namespace ScaleformUI.Menu
             Pagination.ItemsPerPage = 7;
             this.fadingTime = fadingTime;
 
-            SetKey(MenuControls.Up, Control.PhoneUp);
-            SetKey(MenuControls.Down, Control.PhoneDown);
+            SetKey(MenuControls.Up, GameControl.PhoneUp);
+            SetKey(MenuControls.Down, GameControl.PhoneDown);
 
-            SetKey(MenuControls.Left, Control.PhoneLeft);
-            SetKey(MenuControls.Right, Control.PhoneRight);
-            SetKey(MenuControls.Select, Control.FrontendAccept);
+            SetKey(MenuControls.Left, GameControl.PhoneLeft);
+            SetKey(MenuControls.Right, GameControl.PhoneRight);
+            SetKey(MenuControls.Select, GameControl.FrontendAccept);
 
-            SetKey(MenuControls.Back, Control.PhoneCancel);
-            SetKey(MenuControls.Back, Control.FrontendPause);
+            SetKey(MenuControls.Back, GameControl.PhoneCancel);
+            SetKey(MenuControls.Back, GameControl.FrontendPause);
 
             InstructionalButtons = new List<InstructionalButton>()
             {
-                new InstructionalButton(Control.PhoneSelect, _selectTextLocalized),
-                new InstructionalButton(Control.PhoneCancel, _backTextLocalized)
+                new InstructionalButton(GameControl.PhoneSelect, _selectTextLocalized),
+                new InstructionalButton(GameControl.PhoneCancel, _backTextLocalized)
             };
         }
         /// <summary>
@@ -1221,20 +438,20 @@ namespace ScaleformUI.Menu
             Pagination.ItemsPerPage = 7;
             this.fadingTime = fadingTime;
 
-            SetKey(MenuControls.Up, Control.PhoneUp);
-            SetKey(MenuControls.Down, Control.PhoneDown);
+            SetKey(MenuControls.Up, GameControl.PhoneUp);
+            SetKey(MenuControls.Down, GameControl.PhoneDown);
 
-            SetKey(MenuControls.Left, Control.PhoneLeft);
-            SetKey(MenuControls.Right, Control.PhoneRight);
-            SetKey(MenuControls.Select, Control.FrontendAccept);
+            SetKey(MenuControls.Left, GameControl.PhoneLeft);
+            SetKey(MenuControls.Right, GameControl.PhoneRight);
+            SetKey(MenuControls.Select, GameControl.FrontendAccept);
 
-            SetKey(MenuControls.Back, Control.PhoneCancel);
-            SetKey(MenuControls.Back, Control.FrontendPause);
+            SetKey(MenuControls.Back, GameControl.PhoneCancel);
+            SetKey(MenuControls.Back, GameControl.FrontendPause);
 
             InstructionalButtons = new List<InstructionalButton>()
             {
-                new InstructionalButton(Control.PhoneSelect, _selectTextLocalized),
-                new InstructionalButton(Control.PhoneCancel, _backTextLocalized)
+                new InstructionalButton(GameControl.PhoneSelect, _selectTextLocalized),
+                new InstructionalButton(GameControl.PhoneCancel, _backTextLocalized)
             };
             itemless = true;
             _natives.AddTextEntry("ScaleformUILongDesc", description);
@@ -1299,7 +516,7 @@ namespace ScaleformUI.Menu
             Main.scaleformUI.CallFunction("FADE_OUT_MENU");
             do
             {
-                await BaseScript.Delay(0);
+                await Task.Delay(0);
                 isFading = await Main.scaleformUI.CallFunctionReturnValueBool("GET_IS_FADING");
             } while (isFading);
         }
@@ -1308,7 +525,7 @@ namespace ScaleformUI.Menu
             Main.scaleformUI.CallFunction("FADE_IN_MENU");
             do
             {
-                await BaseScript.Delay(0);
+                await Task.Delay(0);
                 isFading = await Main.scaleformUI.CallFunctionReturnValueBool("GET_IS_FADING");
             } while (isFading);
         }
@@ -1317,7 +534,7 @@ namespace ScaleformUI.Menu
             Main.scaleformUI.CallFunction("FADE_OUT_ITEMS");
             do
             {
-                await BaseScript.Delay(0);
+                await Task.Delay(0);
                 isFading = await Main.scaleformUI.CallFunctionReturnValueBool("GET_IS_FADING");
             } while (isFading);
         }
@@ -1326,7 +543,7 @@ namespace ScaleformUI.Menu
             Main.scaleformUI.CallFunction("FADE_IN_ITEMS");
             do
             {
-                await BaseScript.Delay(0);
+                await Task.Delay(0);
                 isFading = await Main.scaleformUI.CallFunctionReturnValueBool("GET_IS_FADING");
             } while (isFading);
         }
@@ -1531,7 +748,7 @@ namespace ScaleformUI.Menu
             else
             {
                 _keyDictionary.Add(control,
-                    new Tuple<List<Keys>, List<Tuple<Control, int>>>(new List<Keys>(), new List<Tuple<Control, int>>()));
+                    new Tuple<List<Keys>, List<Tuple<GameControl, int>>>(new List<Keys>(), new List<Tuple<GameControl, int>>()));
                 _keyDictionary[control].Item1.Add(keyToSet);
             }
         }
@@ -1542,7 +759,7 @@ namespace ScaleformUI.Menu
         /// </summary>
         /// <param name="control"></param>
         /// <param name="gtaControl"></param>
-        public void SetKey(MenuControls control, Control gtaControl)
+        public void SetKey(MenuControls control, GameControl gtaControl)
         {
             SetKey(control, gtaControl, 0);
             SetKey(control, gtaControl, 1);
@@ -1556,15 +773,15 @@ namespace ScaleformUI.Menu
         /// <param name="control"></param>
         /// <param name="gtaControl"></param>
         /// <param name="controlIndex"></param>
-        public void SetKey(MenuControls control, Control gtaControl, int controlIndex)
+        public void SetKey(MenuControls control, GameControl gtaControl, int controlIndex)
         {
             if (_keyDictionary.ContainsKey(control))
-                _keyDictionary[control].Item2.Add(new Tuple<Control, int>(gtaControl, controlIndex));
+                _keyDictionary[control].Item2.Add(new Tuple<GameControl, int>(gtaControl, controlIndex));
             else
             {
                 _keyDictionary.Add(control,
-                    new Tuple<List<Keys>, List<Tuple<Control, int>>>(new List<Keys>(), new List<Tuple<Control, int>>()));
-                _keyDictionary[control].Item2.Add(new Tuple<Control, int>(gtaControl, controlIndex));
+                    new Tuple<List<Keys>, List<Tuple<GameControl, int>>>(new List<Keys>(), new List<Tuple<GameControl, int>>()));
+                _keyDictionary[control].Item2.Add(new Tuple<GameControl, int>(gtaControl, controlIndex));
             }
 
         }
@@ -1589,14 +806,14 @@ namespace ScaleformUI.Menu
         public bool HasControlJustBeenPressed(MenuControls control, Keys key = Keys.None)
         {
             List<Keys> tmpKeys = new List<Keys>(_keyDictionary[control].Item1);
-            List<Tuple<Control, int>> tmpControls = new List<Tuple<Control, int>>(_keyDictionary[control].Item2);
+            List<Tuple<GameControl, int>> tmpControls = new List<Tuple<GameControl, int>>(_keyDictionary[control].Item2);
 
             if (key != Keys.None)
             {
                 //if (tmpKeys.Any(Game.IsKeyPressed))
                 //    return true;
             }
-            if (tmpControls.Any(tuple => Game.IsControlJustPressed(tuple.Item2, tuple.Item1)))
+            if (tmpControls.Any(tuple => _natives.IsControlJustPressed(tuple.Item2, tuple.Item1)))
                 return true;
             return false;
         }
@@ -1611,14 +828,14 @@ namespace ScaleformUI.Menu
         public bool HasControlJustBeenReleased(MenuControls control, Keys key = Keys.None)
         {
             List<Keys> tmpKeys = new List<Keys>(_keyDictionary[control].Item1);
-            List<Tuple<Control, int>> tmpControls = new List<Tuple<Control, int>>(_keyDictionary[control].Item2);
+            List<Tuple<GameControl, int>> tmpControls = new List<Tuple<GameControl, int>>(_keyDictionary[control].Item2);
 
             if (key != Keys.None)
             {
                 //if (tmpKeys.Any(Game.IsKeyPressed))
                 //    return true;
             }
-            if (tmpControls.Any(tuple => Game.IsControlJustReleased(tuple.Item2, tuple.Item1)))
+            if (tmpControls.Any(tuple => _natives.IsControlJustReleased(tuple.Item2, tuple.Item1)))
                 return true;
             return false;
         }
@@ -1636,9 +853,9 @@ namespace ScaleformUI.Menu
         public bool IsControlBeingPressed(MenuControls control, Keys key = Keys.None)
         {
             List<Keys> tmpKeys = new List<Keys>(_keyDictionary[control].Item1);
-            List<Tuple<Control, int>> tmpControls = new List<Tuple<Control, int>>(_keyDictionary[control].Item2);
+            List<Tuple<GameControl, int>> tmpControls = new List<Tuple<GameControl, int>>(_keyDictionary[control].Item2);
             if (HasControlJustBeenReleased(control, key)) _controlCounter = 0;
-            if (tmpControls.Any(tuple => Game.IsControlPressed(tuple.Item2, tuple.Item1)))
+            if (tmpControls.Any(tuple => _natives.IsControlPressed(tuple.Item2, tuple.Item1)))
                 return true;
             return false;
         }
@@ -1652,7 +869,7 @@ namespace ScaleformUI.Menu
         internal override async void Draw()
         {
             if (!Visible || Main.Warning.IsShowing) return;
-            while (!Main.scaleformUI.IsLoaded) await BaseScript.Delay(0);
+            while (!Main.scaleformUI.IsLoaded) await Task.Delay(0);
 
             _natives.HideHudComponentThisFrame(19);
 
@@ -1662,9 +879,9 @@ namespace ScaleformUI.Menu
 
             if (Glare)
             {
-                _menuGlare.CallFunction("SET_DATA_SLOT", GameplayCamera.RelativeHeading);
+                _menuGlare.CallFunction("SET_DATA_SLOT", _natives.GameplayCameraRelativeHeading);
                 SizeF _glareSize = new SizeF(1.0f, 1f);
-                PointF gl = new PointF((Offset.X / Screen.Width) + 0.4499f, (Offset.Y / Screen.Height) + 0.449f);
+                PointF gl = new PointF((Offset.X / _natives.ScreenWidth) + 0.4499f, (Offset.Y / _natives.ScreenHeight) + 0.449f);
 
                 _natives.DrawScaleformMovie(_menuGlare.Handle, gl.X, gl.Y, _glareSize.Width, _glareSize.Height, 255, 255, 255, 255, 0);
             }
@@ -1707,12 +924,12 @@ namespace ScaleformUI.Menu
         {
             if (!Visible || _justOpened || MenuItems.Count == 0 || IsUsingController || !MouseControlsEnabled)
             {
-                Game.EnableControlThisFrame(0, Control.LookUpDown);
-                Game.EnableControlThisFrame(0, Control.LookLeftRight);
-                Game.EnableControlThisFrame(1, Control.LookUpDown);
-                Game.EnableControlThisFrame(1, Control.LookLeftRight);
-                Game.EnableControlThisFrame(2, Control.LookUpDown);
-                Game.EnableControlThisFrame(2, Control.LookLeftRight);
+                _natives.EnableControlThisFrame(0, GameControl.LookUpDown);
+                _natives.EnableControlThisFrame(0, GameControl.LookLeftRight);
+                _natives.EnableControlThisFrame(1, GameControl.LookUpDown);
+                _natives.EnableControlThisFrame(1, GameControl.LookLeftRight);
+                _natives.EnableControlThisFrame(2, GameControl.LookUpDown);
+                _natives.EnableControlThisFrame(2, GameControl.LookLeftRight);
                 if (_itemsDirty)
                 {
                     MenuItems.Where(i => i.Hovered).ToList().ForEach(i => i.Hovered = false);
@@ -1741,7 +958,7 @@ namespace ScaleformUI.Menu
                                     UIMenuItem item = MenuItems[itemId];
                                     if ((MenuItems[itemId] is UIMenuSeparatorItem && (MenuItems[itemId] as UIMenuSeparatorItem).Jumpable) || !MenuItems[itemId].Enabled)
                                     {
-                                        Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
+                                        _natives.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
                                         return;
                                     }
                                     if (item.Selected)
@@ -1816,7 +1033,7 @@ namespace ScaleformUI.Menu
                                     }
                                     CurrentSelection = itemId;
                                     Main.scaleformUI.CallFunction("SET_COUNTER_QTTY", CurrentSelection + 1, MenuItems.Count);
-                                    Game.PlaySound(AUDIO_SELECT, AUDIO_LIBRARY);
+                                    _natives.PlaySound(AUDIO_SELECT, AUDIO_LIBRARY);
                                 }
                                 break;
                             case 10: // panels (10 => context 1, panel_type 0) // ColorPanel
@@ -1841,7 +1058,7 @@ namespace ScaleformUI.Menu
                                             string[] split = colString.Split(',');
                                             picker._value = itemId;
                                             picker.PickerSelect(SColor.FromArgb(Convert.ToInt32(split[1]), Convert.ToInt32(split[2]), Convert.ToInt32(split[3])));
-                                            Game.PlaySound(AUDIO_SELECT, AUDIO_LIBRARY);
+                                            _natives.PlaySound(AUDIO_SELECT, AUDIO_LIBRARY);
                                         }
                                     }
                                 }
@@ -1861,7 +1078,7 @@ namespace ScaleformUI.Menu
                                         string[] split = colString.Split(',');
                                         panel._value = itemId;
                                         panel.PickerSelect(SColor.FromArgb(Convert.ToInt32(split[1]), Convert.ToInt32(split[2]), Convert.ToInt32(split[3])));
-                                        Game.PlaySound(AUDIO_SELECT, AUDIO_LIBRARY);
+                                        _natives.PlaySound(AUDIO_SELECT, AUDIO_LIBRARY);
                                     }
                                 }
                                 break;
@@ -1930,7 +1147,7 @@ namespace ScaleformUI.Menu
             {
                 if (!_natives.HasSoundFinished(menuSound))
                 {
-                    await BaseScript.Delay(1);
+                    await Task.Delay(1);
                     _natives.StopSound(menuSound);
                     _natives.ReleaseSoundId(menuSound);
                 }
@@ -1946,7 +1163,7 @@ namespace ScaleformUI.Menu
                         _natives.SetMouseCursorSprite(6);
                         float mouseSpeed = 0.05f - mouseVariance;
                         if (mouseSpeed > 0.05f) mouseSpeed = 0.05f;
-                        GameplayCamera.RelativeHeading += 70 * mouseSpeed;
+                        _natives.GameplayCameraRelativeHeading += 70 * mouseSpeed;
                     }
                 }
                 else if (ScreenTools.IsMouseInBounds(new PointF(Convert.ToInt32(Resolution.Width - 30f), 0), new SizeF(30, 1080)))
@@ -1955,7 +1172,7 @@ namespace ScaleformUI.Menu
                     {
                         float mouseSpeed = 0.05f - (1f - mouseVariance);
                         if (mouseSpeed > 0.05f) mouseSpeed = 0.05f;
-                        GameplayCamera.RelativeHeading -= 70 * mouseSpeed;
+                        _natives.GameplayCameraRelativeHeading -= 70 * mouseSpeed;
                         _natives.SetMouseCursorSprite(7);
                     }
                 }
@@ -1975,7 +1192,7 @@ namespace ScaleformUI.Menu
             if (CanPlayerCloseMenu)
             {
                 if (playSound)
-                    Game.PlaySound(AUDIO_BACK, AUDIO_LIBRARY);
+                    _natives.PlaySound(AUDIO_BACK, AUDIO_LIBRARY);
                 await FadeOutMenu();
                 if (BreadcrumbsHandler.CurrentDepth == 0)
                 {
@@ -2016,7 +1233,7 @@ namespace ScaleformUI.Menu
                 MenuItems[CurrentSelection].Selected = false;
                 do
                 {
-                    await BaseScript.Delay(0);
+                    await Task.Delay(0);
                     bool overflow = CurrentSelection == 0 && Pagination.TotalPages > 1;
                     if (Pagination.GoUp())
                     {
@@ -2042,7 +1259,7 @@ namespace ScaleformUI.Menu
                     }
                 }
                 while (MenuItems[CurrentSelection] is UIMenuSeparatorItem sp && sp.Jumpable);
-                Game.PlaySound(AUDIO_UPDOWN, AUDIO_LIBRARY);
+                _natives.PlaySound(AUDIO_UPDOWN, AUDIO_LIBRARY);
                 Main.scaleformUI.CallFunction("SET_CURRENT_ITEM", Pagination.ScaleformIndex);
                 Main.scaleformUI.CallFunction("SET_COUNTER_QTTY", CurrentSelection + 1, MenuItems.Count);
                 MenuItems[CurrentSelection].Selected = true;
@@ -2052,7 +1269,7 @@ namespace ScaleformUI.Menu
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e.ToString());
+                Logger.WriteLine(e.ToString());
             }
         }
         public async void GoDown()
@@ -2063,7 +1280,7 @@ namespace ScaleformUI.Menu
                 MenuItems[CurrentSelection].Selected = false;
                 do
                 {
-                    await BaseScript.Delay(0);
+                    await Task.Delay(0);
                     bool overflow = CurrentSelection == MenuItems.Count - 1 && Pagination.TotalPages > 1;
                     if (Pagination.GoDown())
                     {
@@ -2089,7 +1306,7 @@ namespace ScaleformUI.Menu
                     }
                 }
                 while (MenuItems[CurrentSelection] is UIMenuSeparatorItem sp && sp.Jumpable);
-                Game.PlaySound(AUDIO_UPDOWN, AUDIO_LIBRARY);
+                _natives.PlaySound(AUDIO_UPDOWN, AUDIO_LIBRARY);
                 Main.scaleformUI.CallFunction("SET_CURRENT_ITEM", Pagination.ScaleformIndex);
                 Main.scaleformUI.CallFunction("SET_COUNTER_QTTY", CurrentSelection + 1, MenuItems.Count);
                 MenuItems[CurrentSelection].Selected = true;
@@ -2099,7 +1316,7 @@ namespace ScaleformUI.Menu
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e.ToString());
+                Logger.WriteLine(e.ToString());
             }
         }
 
@@ -2107,13 +1324,13 @@ namespace ScaleformUI.Menu
         {
             if (!MenuItems[CurrentSelection].Enabled)
             {
-                Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
+                _natives.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
                 return;
             }
             _natives.BeginScaleformMovieMethod(Main.scaleformUI.Handle, "SET_INPUT_EVENT");
             _natives.ScaleformMovieMethodAddParamInt(10);
             int ret = _natives.EndScaleformMovieMethodReturnValue();
-            while (!_natives.IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+            while (!_natives.IsScaleformMovieMethodReturnValueReady(ret)) await Task.Delay(0);
             int res = _natives.GetScaleformMovieFunctionReturnInt(ret);
             switch (MenuItems[CurrentSelection])
             {
@@ -2154,20 +1371,20 @@ namespace ScaleformUI.Menu
                         break;
                     }
             }
-            Game.PlaySound(AUDIO_LEFTRIGHT, AUDIO_LIBRARY);
+            _natives.PlaySound(AUDIO_LEFTRIGHT, AUDIO_LIBRARY);
         }
 
         public async void GoRight()
         {
             if (!MenuItems[CurrentSelection].Enabled)
             {
-                Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
+                _natives.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
                 return;
             }
             _natives.BeginScaleformMovieMethod(Main.scaleformUI.Handle, "SET_INPUT_EVENT");
             _natives.ScaleformMovieMethodAddParamInt(11);
             int ret = _natives.EndScaleformMovieMethodReturnValue();
-            while (!_natives.IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+            while (!_natives.IsScaleformMovieMethodReturnValueReady(ret)) await Task.Delay(0);
             int res = _natives.GetScaleformMovieFunctionReturnInt(ret);
             switch (MenuItems[CurrentSelection])
             {
@@ -2208,18 +1425,18 @@ namespace ScaleformUI.Menu
                         break;
                     }
             }
-            Game.PlaySound(AUDIO_LEFTRIGHT, AUDIO_LIBRARY);
+            _natives.PlaySound(AUDIO_LEFTRIGHT, AUDIO_LIBRARY);
         }
 
         public void Select(bool playSound)
         {
             if (!MenuItems[CurrentSelection].Enabled)
             {
-                Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
+                _natives.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
                 return;
             }
 
-            if (playSound) Game.PlaySound(AUDIO_SELECT, AUDIO_LIBRARY);
+            if (playSound) _natives.PlaySound(AUDIO_SELECT, AUDIO_LIBRARY);
             switch (MenuItems[CurrentSelection])
             {
                 case UIMenuCheckboxItem:
@@ -2416,7 +1633,7 @@ namespace ScaleformUI.Menu
                 if (!value) return;
                 if (!ResetCursorOnOpen) return;
                 _natives.SetCursorLocation(0.5f, 0.5f);
-                Screen.Hud.CursorSprite = CursorSprite.Normal;
+                _natives.CursorSprite = GameCursorSprite.Normal;
             }
         }
 
@@ -2427,7 +1644,7 @@ namespace ScaleformUI.Menu
             if (itemless)
             {
                 EnableAnimation = false;
-                while (!Main.scaleformUI.IsLoaded) await BaseScript.Delay(0);
+                while (!Main.scaleformUI.IsLoaded) await Task.Delay(0);
                 _natives.BeginScaleformMovieMethod(Main.scaleformUI.Handle, "CREATE_MENU");
                 _natives.PushScaleformMovieMethodParameterString(Title);
                 _natives.PushScaleformMovieMethodParameterString(SubtitleColor != HudColor.NONE ? "~" + SubtitleColor + "~" + Subtitle : Subtitle);
@@ -2457,7 +1674,7 @@ namespace ScaleformUI.Menu
             if (!itemsOnly)
             {
                 EnableAnimation = false;
-                while (!Main.scaleformUI.IsLoaded) await BaseScript.Delay(0);
+                while (!Main.scaleformUI.IsLoaded) await Task.Delay(0);
                 Main.scaleformUI.CallFunction("CREATE_MENU", Title, SubtitleColor != HudColor.NONE ? "~" + SubtitleColor + "~" + Subtitle : Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, MenuItems.Count, EnableAnimation, (int)AnimationType, (int)buildingAnimation, counterColor, descriptionFont.FontName, descriptionFont.FontID, fadingTime, bannerColor.ArgbValue, false);
                 if (Windows.Count > 0)
                 {
@@ -2488,7 +1705,7 @@ namespace ScaleformUI.Menu
                 {
                     while (MenuItems.Count == 0)
                     {
-                        await BaseScript.Delay(0);
+                        await Task.Delay(0);
                         if (Main.GameTime - timer > 150)
                         {
                             Main.scaleformUI.CallFunction("SET_CURRENT_ITEM", Pagination.GetPageIndexFromMenuIndex(CurrentSelection));
@@ -2558,13 +1775,13 @@ namespace ScaleformUI.Menu
             leftClickEnabled = leftClickSelect;
             if (leftClickSelect && !MouseControlsEnabled)
             {
-                SetKey(MenuControls.Select, Control.Attack);
+                SetKey(MenuControls.Select, GameControl.Attack);
 
             }
             else
             {
                 ResetKey(MenuControls.Select);
-                SetKey(MenuControls.Select, Control.FrontendAccept);
+                SetKey(MenuControls.Select, GameControl.FrontendAccept);
             }
         }
 
@@ -2603,7 +1820,7 @@ namespace ScaleformUI.Menu
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("ScaleformUI - " + ex.ToString());
+                Logger.WriteLine("ScaleformUI - " + ex.ToString());
             }
         }
 
@@ -2627,7 +1844,7 @@ namespace ScaleformUI.Menu
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("^1ScaleformUI - " + ex.ToString());
+                Logger.WriteLine("^1ScaleformUI - " + ex.ToString());
                 OnFilteringFailed?.Invoke(this);
             }
         }
@@ -2648,7 +1865,7 @@ namespace ScaleformUI.Menu
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("ScaleformUI - " + ex.ToString());
+                Logger.WriteLine("ScaleformUI - " + ex.ToString());
             }
         }
 
@@ -2988,15 +2205,15 @@ namespace ScaleformUI.Menu
                 {
                     InstructionalButtons = new List<InstructionalButton>()
                     {
-                        new InstructionalButton(Control.PhoneSelect, _selectTextLocalized),
-                        new InstructionalButton(Control.PhoneCancel, _backTextLocalized)
+                        new InstructionalButton(GameControl.PhoneSelect, _selectTextLocalized),
+                        new InstructionalButton(GameControl.PhoneCancel, _backTextLocalized)
                     };
                 }
                 else
                 {
                     InstructionalButtons = new List<InstructionalButton>()
                     {
-                        new InstructionalButton(Control.PhoneSelect, _selectTextLocalized),
+                        new InstructionalButton(GameControl.PhoneSelect, _selectTextLocalized),
                     };
                 }
                 if (Visible)

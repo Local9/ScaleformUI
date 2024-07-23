@@ -1,5 +1,4 @@
-﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
+﻿using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
 using ScaleformUI.Scaleforms.ScaleformUI.Interfaces;
 using System.Drawing;
@@ -40,8 +39,8 @@ namespace ScaleformUI.Elements
         /// <returns>true if the mouse is inside of the specified bounds, false otherwise.</returns>
         public static bool IsMouseInBounds(Point topLeft, Size boxSize)
         {
-            Game.EnableControlThisFrame(0, Control.CursorX);
-            Game.EnableControlThisFrame(0, Control.CursorY);
+            _natives.EnableControlThisFrame(0, GameControl.CursorX);
+            _natives.EnableControlThisFrame(0, GameControl.CursorY);
             // Get the resolution while maintaining the ratio.
             SizeF res = ResolutionMaintainRatio;
             // Then, get the position of mouse on the screen while relative to the current resolution
@@ -56,8 +55,8 @@ namespace ScaleformUI.Elements
 
         public static bool IsMouseInBounds(PointF topLeft, SizeF boxSize)
         {
-            Game.EnableControlThisFrame(0, Control.CursorX);
-            Game.EnableControlThisFrame(0, Control.CursorY);
+            _natives.EnableControlThisFrame(0, GameControl.CursorX);
+            _natives.EnableControlThisFrame(0, GameControl.CursorY);
             // Get the resolution while maintaining the ratio.
             SizeF res = ResolutionMaintainRatio;
             // Then, get the position of mouse on the screen while relative to the current resolution
@@ -72,8 +71,8 @@ namespace ScaleformUI.Elements
 
         public static bool IsMouseInBounds(Point topLeft, Size boxSize, Point DrawOffset)
         {
-            Game.EnableControlThisFrame(0, Control.CursorX);
-            Game.EnableControlThisFrame(0, Control.CursorY);
+            _natives.EnableControlThisFrame(0, GameControl.CursorX);
+            _natives.EnableControlThisFrame(0, GameControl.CursorY);
             SizeF res = ResolutionMaintainRatio;
 
             int mouseX = (int)Math.Round(API.GetDisabledControlNormal(0, 239) * res.Width);
@@ -88,8 +87,8 @@ namespace ScaleformUI.Elements
 
         public static bool IsMouseInBounds(PointF topLeft, SizeF boxSize, PointF DrawOffset)
         {
-            Game.EnableControlThisFrame(0, Control.CursorX);
-            Game.EnableControlThisFrame(0, Control.CursorY);
+            _natives.EnableControlThisFrame(0, GameControl.CursorX);
+            _natives.EnableControlThisFrame(0, GameControl.CursorY);
             SizeF res = ResolutionMaintainRatio;
 
             float mouseX = _natives.GetDisabledControlNormal(0, 239) * res.Width;

@@ -1,6 +1,4 @@
-﻿using CitizenFX.Core;
-using CitizenFX.Core.UI;
-using ScaleformUI.Elements;
+﻿using ScaleformUI.Elements;
 using ScaleformUI.Menu;
 using ScaleformUI.Menus;
 using ScaleformUI.Scaleforms;
@@ -38,8 +36,8 @@ namespace ScaleformUI.Radio
             Stations = new List<RadioItem>();
             InstructionalButtons = new List<InstructionalButton>()
             {
-                new InstructionalButton(Control.PhoneSelect, UIMenu._selectTextLocalized),
-                new InstructionalButton(Control.PhoneCancel, UIMenu._backTextLocalized)
+                new InstructionalButton(GameControl.PhoneSelect, UIMenu._selectTextLocalized),
+                new InstructionalButton(GameControl.PhoneCancel, UIMenu._backTextLocalized)
             };
         }
 
@@ -127,8 +125,8 @@ namespace ScaleformUI.Radio
         {
             Controls.Toggle(false);
             // block camera movements
-            Game.DisableControlThisFrame(0, Control.LookLeftRight);
-            Game.DisableControlThisFrame(0, Control.LookUpDown);
+            _natives.DisableControlThisFrame(0, GameControl.LookLeftRight);
+            _natives.DisableControlThisFrame(0, GameControl.LookUpDown);
 
             // take mouse/gamepad LStick
             float x = (float)Math.Floor(_natives.GetDisabledControlNormal(2, 13) * 1000);
@@ -173,12 +171,12 @@ namespace ScaleformUI.Radio
                 }
             }
 
-            if (Game.IsControlJustPressed(0, Control.FrontendCancel))
+            if (_natives.IsControlJustPressed(0, GameControl.FrontendCancel))
             {
                 GoBack();
             }
 
-            if (Game.IsControlJustPressed(0, Control.FrontendAccept))
+            if (_natives.IsControlJustPressed(0, GameControl.FrontendAccept))
             {
                 Select();
             }
@@ -208,7 +206,7 @@ namespace ScaleformUI.Radio
             Main.radioMenu.CallFunction("ANIMATE_IN", AnimationDuration, (int)AnimDirection, "zoom");
             do
             {
-                await BaseScript.Delay(0);
+                await Task.Delay(0);
                 isAnimating = await Main.radioMenu.CallFunctionReturnValueBool("GET_IS_ANIMATING");
             } while (isAnimating);
         }
@@ -217,7 +215,7 @@ namespace ScaleformUI.Radio
             Main.radioMenu.CallFunction("ANIMATE_OUT", AnimationDuration, (int)AnimDirection, "zoom");
             do
             {
-                await BaseScript.Delay(0);
+                await Task.Delay(0);
                 isAnimating = await Main.radioMenu.CallFunctionReturnValueBool("GET_IS_ANIMATING");
             } while (isAnimating);
         }
@@ -229,7 +227,7 @@ namespace ScaleformUI.Radio
 
         internal override void Draw()
         {
-            Screen.Hud.HideComponentThisFrame(HudComponent.WeaponWheel);
+            _natives.HideHudComponentThisFrame(GameHudComponent.WeaponWheel);
             Main.radioMenu.Render2D();
         }
 

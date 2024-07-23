@@ -1,12 +1,36 @@
 ﻿#if FIVEM
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
+using CitizenFX.Core.UI;
+using ScaleformUI.Elements;
 using ScaleformUI.Scaleforms.ScaleformUI.Interfaces;
+using System.Drawing;
 
 namespace ScaleformUI.Scaleforms.ScaleformUI.Controllers
 {
     public class FivemNativesHandler : IRageNatives
     {
+        private GameCursorSprite? _cursorSprite;
+
+        public float ScreenWidth => Screen.Width;
+        public float ScreenHeight => Screen.Height;
+
+        public float GameplayCameraRelativeHeading
+        {
+            get => API.GetGameplayCamRelativeHeading();
+            set => API.SetGameplayCamRelativeHeading(value);
+        }
+
+        public GameCursorSprite CursorSprite
+        {
+            get => _cursorSprite ?? GameCursorSprite.Normal;
+            set
+            {
+                API.SetCursorSprite((int)value);
+                _cursorSprite = value;
+            }
+        }
+
         public void ActivateFrontendMenu(uint menuhash, bool togglePause, int component)
         {
             API.ActivateFrontendMenu(menuhash, togglePause, component);
@@ -167,6 +191,16 @@ namespace ScaleformUI.Scaleforms.ScaleformUI.Controllers
             API.DisableControlAction(inputGroup, control, disable);
         }
 
+        public void DisableControlThisFrame(int inputGroup, GameControl control)
+        {
+            Game.DisableControlThisFrame(inputGroup, (Control)control);
+        }
+
+        public void DisableControlThisFrame(int inputGroup, int control)
+        {
+            Game.DisableControlThisFrame(inputGroup, (Control)control);
+        }
+
         public void DisplayHelpTextThisFrame(string text, bool curvedWindow)
         {
             API.DisplayHelpTextThisFrame(text, curvedWindow);
@@ -215,6 +249,16 @@ namespace ScaleformUI.Scaleforms.ScaleformUI.Controllers
         public void EnableControlAction(int inputGroup, int control, bool enable)
         {
             API.EnableControlAction(inputGroup, control, enable);
+        }
+
+        public void EnableControlThisFrame(int inputGroup, GameControl control)
+        {
+            Game.EnableControlThisFrame(inputGroup, (Control)control);
+        }
+
+        public void EnableControlThisFrame(int inputGroup, int control)
+        {
+            Game.EnableControlThisFrame(inputGroup, (Control)control);
         }
 
         public void EndScaleformMovieMethod()
@@ -267,6 +311,11 @@ namespace ScaleformUI.Scaleforms.ScaleformUI.Controllers
             return Function.Call<int>(Hash.END_TEXT_COMMAND_THEFEED_POST_VERSUS_TU, mugshotOneTxd, mugshotOneTxn, leftScore, mugshotTwoTxd, mugshotTwoTxn, rightScore, leftColor, rightColor);
         }
 
+        public string GetControlInstructionalButton(int inputGroup, GameControl control)
+        {
+            return API.GetControlInstructionalButton(inputGroup, (int)control, 1);
+        }
+
         public int GetCurrentFrontendMenuVersion()
         {
             return API.GetCurrentFrontendMenuVersion();
@@ -285,6 +334,11 @@ namespace ScaleformUI.Scaleforms.ScaleformUI.Controllers
         public bool GetGroundZFor_3dCoord(float x, float y, float z, ref float groundZ, bool unk)
         {
             return API.GetGroundZFor_3dCoord(x, y, z, ref groundZ, unk);
+        }
+
+        public string GetGXTEntry(string entry)
+        {
+            return Game.GetGXTEntry(entry);
         }
 
         public int GetHashKey(string value)
@@ -347,6 +401,11 @@ namespace ScaleformUI.Scaleforms.ScaleformUI.Controllers
             return API.GetScaleformMovieMethodReturnValueString(handle);
         }
 
+        public Size GetScreenResolution()
+        {
+            return Screen.Resolution;
+        }
+
         public int GetSoundId()
         {
             return API.GetSoundId();
@@ -395,6 +454,41 @@ namespace ScaleformUI.Scaleforms.ScaleformUI.Controllers
         public void HideHudComponentThisFrame(int hudComponent)
         {
             API.HideHudComponentThisFrame(hudComponent);
+        }
+
+        public void HideHudComponentThisFrame(GameHudComponent hudComponent)
+        {
+            API.HideHudComponentThisFrame((int)hudComponent);
+        }
+
+        public void HideLoadingPrompt()
+        {
+            Screen.LoadingPrompt.Hide();
+        }
+
+        public bool IsControlJustPressed(int inputGroup, GameControl control)
+        {
+            return API.IsControlJustPressed(inputGroup, (int)control);
+        }
+
+        public bool IsControlJustReleased(int inputGroup, GameControl control)
+        {
+            return API.IsControlJustReleased(inputGroup, (int)control);
+        }
+
+        public bool IsControlJustReleased(int inputGroup, int control)
+        {
+            return API.IsControlJustReleased(inputGroup, control);
+        }
+
+        public bool IsControlPressed(int inputGroup, GameControl control)
+        {
+            return API.IsControlPressed(inputGroup, (int)control);
+        }
+
+        public bool IsControlPressed(int inputGroup, int control)
+        {
+            return API.IsControlPressed(inputGroup, control);
         }
 
         public bool IsFrontendReadyForControl()
@@ -452,9 +546,19 @@ namespace ScaleformUI.Scaleforms.ScaleformUI.Controllers
             return API.PlayerPedId();
         }
 
+        public void PlaySound(string audioName, string audioRef)
+        {
+            API.PlaySoundFrontend(-1, audioName, audioRef, false);
+        }
+
         public void PlaySoundFrontend(int soundId, string audioName, string audioRef, bool p3)
         {
             API.PlaySoundFrontend(soundId, audioName, audioRef, p3);
+        }
+
+        public void PlaySoundFrontend(string audioName, string audioRef)
+        {
+            API.PlaySoundFrontend(-1, audioName, audioRef, false);
         }
 
         public void PushScaleformMovieFunctionParameterBool(bool value)
@@ -780,6 +884,21 @@ namespace ScaleformUI.Scaleforms.ScaleformUI.Controllers
         public void SetWaypointOff()
         {
             API.SetWaypointOff();
+        }
+
+        public void ShowCursorThisFrame()
+        {
+            API.ShowCursorThisFrame();
+        }
+
+        public void ShowLoadingPrompt(string text, int type)
+        {
+            Screen.LoadingPrompt.Show(text, (LoadingSpinnerType)type);
+        }
+
+        public void ShowLoadingPrompt(string text, GameLoadingSpinnerType type)
+        {
+            Screen.LoadingPrompt.Show(text, (LoadingSpinnerType)type);
         }
 
         public void StartGpsCustomRoute(int routeColour, bool displayOnFoot, bool followPlayer)

@@ -13,54 +13,54 @@ namespace ScaleformUI.Elements
         /// <summary>
         /// All of the controls required for using a keyboard.
         /// </summary>
-        private static readonly Control[] NecessaryControlsKeyboard = new Control[]
+        private static readonly GameControl[] NecessaryControlsKeyboard = new GameControl[]
         {
-            Control.FrontendAccept,
-            Control.FrontendAxisX,
-            Control.FrontendAxisY,
-            Control.FrontendDown,
-            Control.FrontendUp,
-            Control.FrontendLeft,
-            Control.FrontendRight,
-            Control.FrontendCancel,
-            Control.FrontendSelect,
-            Control.CursorScrollDown,
-            Control.CursorScrollUp,
-            Control.CursorX,
-            Control.CursorY,
-            Control.CursorAccept,
-            Control.CursorCancel,
-            Control.MoveUpDown,
-            Control.MoveLeftRight,
-            Control.Sprint,
-            Control.Jump,
-            Control.Enter,
-            Control.VehicleExit,
-            Control.VehicleAccelerate,
-            Control.VehicleBrake,
-            Control.VehicleMoveLeftRight,
-            Control.VehicleFlyYawLeft,
-            Control.FlyLeftRight,
-            Control.FlyUpDown,
-            Control.VehicleFlyYawRight,
-            Control.VehicleHandbrake,
+            GameControl.FrontendAccept,
+            GameControl.FrontendAxisX,
+            GameControl.FrontendAxisY,
+            GameControl.FrontendDown,
+            GameControl.FrontendUp,
+            GameControl.FrontendLeft,
+            GameControl.FrontendRight,
+            GameControl.FrontendCancel,
+            GameControl.FrontendSelect,
+            GameControl.CursorScrollDown,
+            GameControl.CursorScrollUp,
+            GameControl.CursorX,
+            GameControl.CursorY,
+            GameControl.CursorAccept,
+            GameControl.CursorCancel,
+            GameControl.MoveUpDown,
+            GameControl.MoveLeftRight,
+            GameControl.Sprint,
+            GameControl.Jump,
+            GameControl.Enter,
+            GameControl.VehicleExit,
+            GameControl.VehicleAccelerate,
+            GameControl.VehicleBrake,
+            GameControl.VehicleMoveLeftRight,
+            GameControl.VehicleFlyYawLeft,
+            GameControl.FlyLeftRight,
+            GameControl.FlyUpDown,
+            GameControl.VehicleFlyYawRight,
+            GameControl.VehicleHandbrake,
 
         };
         /// <summary>
         /// All of the controls required for using a gamepad.
         /// </summary>
-        private static readonly Control[] NecessaryControlsGamePad = NecessaryControlsKeyboard.Concat(new Control[]
+        private static readonly GameControl[] NecessaryControlsGamePad = NecessaryControlsKeyboard.Concat(new GameControl[]
         {
-            Control.LookUpDown,
-            Control.LookLeftRight,
-            Control.Aim,
-            Control.Attack,
-            Control.VehicleAccelerate,
-            Control.VehicleBrake,
-            Control.VehicleMoveLeftRight,
-            Control.MoveUpDown,
-            Control.MoveLeftRight,
-            Control.VehicleExit,
+            GameControl.LookUpDown,
+            GameControl.LookLeftRight,
+            GameControl.Aim,
+            GameControl.Attack,
+            GameControl.VehicleAccelerate,
+            GameControl.VehicleBrake,
+            GameControl.VehicleMoveLeftRight,
+            GameControl.MoveUpDown,
+            GameControl.MoveLeftRight,
+            GameControl.VehicleExit,
         }).ToArray();
 
         /// <summary>
@@ -86,9 +86,9 @@ namespace ScaleformUI.Elements
 
                 // Now, re-enable the controls that are required for the game
                 // First, pick the right controls for gamepad or keyboard and mouse
-                Control[] list = Game.CurrentInputMode == InputMode.GamePad ? NecessaryControlsGamePad : NecessaryControlsKeyboard;
+                GameControl[] list = Game.CurrentInputMode == InputMode.GamePad ? NecessaryControlsGamePad : NecessaryControlsKeyboard;
                 // Then, enable all of the controls for that input mode
-                foreach (Control control in list)
+                foreach (GameControl control in list)
                     _natives.EnableControlAction(0, (int)control, true);
             }
         }
