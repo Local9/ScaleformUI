@@ -1,6 +1,4 @@
-﻿using CitizenFX.Core.Native;
-using CitizenFX.Core.UI;
-using ScaleformUI.Scaleforms.ScaleformUI.Interfaces;
+﻿using ScaleformUI.Scaleforms.ScaleformUI.Interfaces;
 using System.Drawing;
 
 namespace ScaleformUI.Elements
@@ -20,8 +18,8 @@ namespace ScaleformUI.Elements
             get
             {
                 // Get the game width and height
-                int screenw = Screen.Resolution.Width;
-                int screenh = Screen.Resolution.Height;
+                int screenw = _natives.ScreenResolutionWidth;
+                int screenh = _natives.ScreenResolutionHeight;
                 // Calculate the ratio
                 float ratio = (float)screenw / screenh;
                 // And the width with that ratio
@@ -44,8 +42,8 @@ namespace ScaleformUI.Elements
             // Get the resolution while maintaining the ratio.
             SizeF res = ResolutionMaintainRatio;
             // Then, get the position of mouse on the screen while relative to the current resolution
-            int mouseX = (int)Math.Round(API.GetDisabledControlNormal(0, 239) * res.Width);
-            int mouseY = (int)Math.Round(API.GetDisabledControlNormal(0, 240) * res.Height);
+            int mouseX = (int)Math.Round(_natives.GetDisabledControlNormal(0, 239) * res.Width);
+            int mouseY = (int)Math.Round(_natives.GetDisabledControlNormal(0, 240) * res.Height);
             // And check if the mouse is on the rectangle bounds
             bool isX = mouseX >= topLeft.X && mouseX <= topLeft.X + boxSize.Width;
             bool isY = mouseY > topLeft.Y && mouseY < topLeft.Y + boxSize.Height;
@@ -75,8 +73,8 @@ namespace ScaleformUI.Elements
             _natives.EnableControlThisFrame(0, GameControl.CursorY);
             SizeF res = ResolutionMaintainRatio;
 
-            int mouseX = (int)Math.Round(API.GetDisabledControlNormal(0, 239) * res.Width);
-            int mouseY = (int)Math.Round(API.GetDisabledControlNormal(0, 240) * res.Height);
+            int mouseX = (int)Math.Round(_natives.GetDisabledControlNormal(0, 239) * res.Width);
+            int mouseY = (int)Math.Round(_natives.GetDisabledControlNormal(0, 240) * res.Height);
 
             mouseX += DrawOffset.X;
             mouseY += DrawOffset.Y;
@@ -120,8 +118,8 @@ namespace ScaleformUI.Elements
                 g = 10 - g;
 
                 // Then, get the screen resolution
-                float screenw = Screen.ScaledWidth;
-                float screenh = Screen.Height;
+                float screenw = _natives.ScreenScaledWidth;
+                float screenh = _natives.ScreenHeight;
                 // Calculate the ratio
                 float ratio = (float)screenw / screenh;
                 // And this thing (that I don't know what it does)

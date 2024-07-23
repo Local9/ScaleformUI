@@ -1,4 +1,12 @@
-﻿using ScaleformUI.Elements;
+﻿#if FIVEM
+using CitizenFX.Core;
+#endif
+
+#if ALTV
+using System.Numerics;
+#endif
+
+using ScaleformUI.Elements;
 using System.Drawing;
 
 namespace ScaleformUI.Scaleforms.ScaleformUI.Interfaces
@@ -6,8 +14,15 @@ namespace ScaleformUI.Scaleforms.ScaleformUI.Interfaces
     public interface IRageNatives
     {
         public float ScreenWidth { get; }
+        public float ScreenScaledWidth { get; }
+        public int ScreenResolutionWidth { get; }
         public float ScreenHeight { get; }
+        public int ScreenResolutionHeight { get; }
         public float GameplayCameraRelativeHeading { get; set; }
+        public Vector3 GameplayCameraPosition { get; }
+        public float GameplayCameraFieldOfView { get; }
+
+        public bool IsPaused { get; }
         public GameCursorSprite CursorSprite { get; set; }
         public void RequestHudScaleform(int hudComponent);
         public bool HasHudScaleformLoaded(int hudComponent);
@@ -56,7 +71,6 @@ namespace ScaleformUI.Scaleforms.ScaleformUI.Interfaces
         public void DeleteWaypoint();
         public void ClearGpsCustomRoute();
         public void ClearGpsFlags();
-        public bool IsGamePaused();
         public string GetCurrentResourceName();
         public int GetNetworkTime();
         public int GetNetworkTimeAccurate();

@@ -1,4 +1,4 @@
-﻿using CitizenFX.Core;
+﻿using ScaleformUI.Elements;
 using ScaleformUI.Menu;
 using ScaleformUI.Menus;
 using ScaleformUI.PauseMenus;
@@ -20,8 +20,8 @@ namespace ScaleformUI
         internal static MenuBase currentMenu;
         internal static PauseMenuBase currentBase;
         internal static bool ableToDraw;
-        private static Ped _ped;
-        internal static Ped PlayerPed
+        private static ScaleformPed _ped;
+        internal static ScaleformPed PlayerPed
         {
             get
             {
@@ -29,7 +29,7 @@ namespace ScaleformUI
 
                 if (_ped is null || handle != _ped.Handle)
                 {
-                    _ped = new Ped(handle);
+                    _ped = new ScaleformPed(handle);
                 }
 
                 return _ped;

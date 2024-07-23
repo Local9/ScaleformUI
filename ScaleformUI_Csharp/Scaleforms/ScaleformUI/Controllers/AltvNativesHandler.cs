@@ -400,11 +400,6 @@ namespace ScaleformUI.Scaleforms.ScaleformUI.Controllers
             throw new NotImplementedException();
         }
 
-        public bool IsGamePaused()
-        {
-            throw new NotImplementedException();
-        }
-
         public bool IsInputDisabled(int inputGroup)
         {
             throw new NotImplementedException();

@@ -1,9 +1,15 @@
-﻿using CitizenFX.Core;
-using CitizenFX.Core.UI;
+﻿#if FIVEM
+using CitizenFX.Core;
+#endif
+
+#if ALTV
+using System.Numerics;
+#endif
+
 using ScaleformUI.Elements;
 using ScaleformUI.Scaleforms;
 using ScaleformUI.Scaleforms.ScaleformUI.Interfaces;
-using Font = CitizenFX.Core.UI.Font;
+
 namespace ScaleformUI
 {
     public enum BusySpinner
@@ -164,7 +170,7 @@ namespace ScaleformUI
                 natives.SetNotificationBackgroundColor((int)bgColor);
             if (!flashColor.IsEmpty && !blink)
                 natives.SetNotificationFlashColor(flashColor.R, flashColor.G, flashColor.B, flashColor.A);
-            if (sound) Audio.PlaySoundFrontend("DELETE", "HUD_DEATHMATCH_SOUNDSET");
+            if (sound) natives.PlaySoundFrontend("DELETE", "HUD_DEATHMATCH_SOUNDSET");
             return new ScaleformUINotification(natives.EndTextCommandThefeedPostMessagetext(iconSet, icon, true, (int)type, title, subtitle));
             //return new Notification(EndTextCommandThefeedPostTicker(blink, showInBrief));
         }
@@ -200,6 +206,7 @@ namespace ScaleformUI
         /// <param name="rightColor">Left ped color</param>
         public static async Task<ScaleformUINotification> ShowVSNotification(int leftScore, HudColor leftColor, Ped rightPed, int rightScore, HudColor rightColor)
         {
+            IRageNatives natives = Main.GetNativesHandler();
             return await ShowVSNotification(Game.PlayerPed, leftScore, leftColor, rightPed, rightScore, rightColor);
         }
 
@@ -221,7 +228,7 @@ namespace ScaleformUI
             return new(natives.EndTextCommandThefeedPostVersusTu(mug.Item2, mug.Item2, leftScore, otherMug.Item2, otherMug.Item2, rightScore, (int)leftColor, (int)rightColor));
         }
 
-        private static void _drawText3d(Vector3 campos, float camfov, string text, Vector3 coord, SColor color, Font font = Font.ChaletComprimeCologne, float scale = 17f)
+        private static void _drawText3d(Vector3 campos, float camfov, string text, Vector3 coord, SColor color, GameFont font = GameFont.ChaletComprimeCologne, float scale = 17f)
         {
             IRageNatives natives = Main.GetNativesHandler();
             float dist = Vector3.Distance(coord, campos);
@@ -252,10 +259,11 @@ namespace ScaleformUI
         /// <param name="color">Text color</param>
         /// <param name="font">Set the desired <see cref="Font"/></param>
         /// <param name="scale">Text scale (Default is 17.0f)</param>
-        public static void DrawText3D(string text, Vector3 coord, SColor color, Font font = Font.ChaletComprimeCologne, float scale = 17f)
+        public static void DrawText3D(string text, Vector3 coord, SColor color, GameFont font = GameFont.ChaletComprimeCologne, float scale = 17f)
         {
-            if (Game.IsPaused) return;
-            _drawText3d(GameplayCamera.Position, GameplayCamera.FieldOfView, text, coord, color, font, scale);
+            IRageNatives natives = Main.GetNativesHandler();
+            if (natives.IsPaused) return;
+            _drawText3d(natives.GameplayCameraPosition, natives.GameplayCameraFieldOfView, text, coord, color, font, scale);
         }
 
         /// <summary>
@@ -267,9 +275,10 @@ namespace ScaleformUI
         /// <param name="color">Text color</param>
         /// <param name="font">Set the desired <see cref="Font"/></param>
         /// <param name="scale">Text scale (Default is 17.0f)</param>
-        public static void DrawText3D(Camera camera, string text, Vector3 coord, SColor color, Font font = Font.ChaletComprimeCologne, float scale = 17f)
+        public static void DrawText3D(Camera camera, string text, Vector3 coord, SColor color, GameFont font = GameFont.ChaletComprimeCologne, float scale = 17f)
         {
-            if (Game.IsPaused) return;
+            IRageNatives natives = Main.GetNativesHandler();
+            if (natives.IsPaused) return;
             _drawText3d(camera.Position, camera.FieldOfView, text, coord, color, font, scale);
 
         }
@@ -285,12 +294,12 @@ namespace ScaleformUI
         /// <param name="TextAlignment">Text alignment (default center)</param>
         /// <param name="Outline">True to outline the text (default true)</param>
         /// <param name="Wrap">Wrap the text at desired boundries (default 0)</param>
-        public static void DrawText(float x = 0.5f, float y = 0.8f, string text = "", SColor color = default, Font font = Font.ChaletComprimeCologne, Alignment TextAlignment = Alignment.Center, bool Outline = true, float Wrap = 0)
+        public static void DrawText(float x = 0.5f, float y = 0.8f, string text = "", SColor color = default, GameFont font = GameFont.ChaletComprimeCologne, TextAlignment TextAlignment = TextAlignment.Center, bool Outline = true, float Wrap = 0)
         {
             IRageNatives natives = Main.GetNativesHandler();
-            if (Game.IsPaused || string.IsNullOrWhiteSpace(text)) return;
-            int screenw = Screen.Resolution.Width;
-            int screenh = Screen.Resolution.Height;
+            if (natives.IsPaused || string.IsNullOrWhiteSpace(text)) return;
+            int screenw = natives.ScreenResolutionWidth;
+            int screenh = natives.ScreenResolutionHeight;
             const float height = 1080f;
             float ratio = (float)screenw / screenh;
             float width = height * ratio;
@@ -310,10 +319,10 @@ namespace ScaleformUI
             }
             switch (TextAlignment)
             {
-                case Alignment.Center:
+                case TextAlignment.Center:
                     natives.SetTextCentre(true);
                     break;
-                case Alignment.Right:
+                case TextAlignment.Right:
                     natives.SetTextRightJustify(true);
                     natives.SetTextWrap(0, x);
                     break;
@@ -331,7 +340,7 @@ namespace ScaleformUI
         public static void StartLoadingMessage(string label, GameLoadingSpinnerType busySpinner = GameLoadingSpinnerType.SocialClubSaving, int savingTime = -1)
         {
             IRageNatives natives = Main.GetNativesHandler();
-            string textOutput = Game.GetGXTEntry(label);
+            string textOutput = natives.GetGXTEntry(label);
             if (string.IsNullOrEmpty(textOutput))
                 textOutput = label;
             if (savingTime > 0)
@@ -353,7 +362,7 @@ namespace ScaleformUI
             IRageNatives natives = Main.GetNativesHandler();
             int mugshot = natives.RegisterPedheadshot(ped.Handle);
             if (transparent) mugshot = natives.RegisterPedheadshotTransparent(ped.Handle);
-            while (!natives.IsPedheadshotReady(mugshot)) await BaseScript.Delay(1);
+            while (!natives.IsPedheadshotReady(mugshot)) await Task.Delay(1);
             string txd = natives.GetPedheadshotTxdString(mugshot);
 
             return new Tuple<int, string>(mugshot, txd);

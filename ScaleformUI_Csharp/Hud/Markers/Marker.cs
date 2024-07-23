@@ -1,4 +1,11 @@
-﻿using CitizenFX.Core;
+﻿#if FIVEM
+using CitizenFX.Core;
+#endif
+
+#if ALTV
+using System.Numerics;
+#endif
+
 using ScaleformUI.Elements;
 using ScaleformUI.Scaleforms.ScaleformUI.Interfaces;
 

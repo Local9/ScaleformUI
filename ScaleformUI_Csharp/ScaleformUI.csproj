@@ -5,8 +5,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ScaleformUI</RootNamespace>
     <AssemblyName>ScaleformUI</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFrameworkVersion Condition="'$(Configuration)|$(Platform)'=='FiveM Debug|AnyCPU' Or '$(Configuration)' == 'FiveM Release'">v4.5.2</TargetFrameworkVersion>
+    <TargetFramework Condition="'$(Configuration)|$(Platform)'=='FiveM Debug|AnyCPU' Or '$(Configuration)' == 'FiveM Release'">net462</TargetFramework>
+    <TargetFramework Condition="'$(Configuration)|$(Platform)'=='AltV Debug|AnyCPU' Or '$(Configuration)' == 'AltV Release'">net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
@@ -44,7 +45,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CitizenFX.Core.Client" Version="1.0.8981" ExcludeAssets="runtime" />
+  <PackageReference Include="AltV.Net.Client.Async" Version="16.1.0" Condition="'$(Configuration)|$(Platform)'=='AltV Debug|AnyCPU' Or '$(Configuration)' == 'AltV Release'" />
+  <PackageReference Include="CitizenFX.Core.Client" Version="1.0.8981" ExcludeAssets="runtime" Condition="'$(Configuration)|$(Platform)'=='FiveM Debug|AnyCPU' Or '$(Configuration)' == 'FiveM Release'" />
 	<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
 	<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <None Include="..\LICENSE.txt">

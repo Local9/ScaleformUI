@@ -126,7 +126,7 @@ namespace ScaleformUI
                 Warning.Update();
             if (InstructionalButtons._sc != null && (InstructionalButtons.ControlButtons != null && InstructionalButtons.ControlButtons.Count != 0))
                 InstructionalButtons.Update();
-            if (_natives.IsGamePaused()) return;
+            if (_natives.IsPaused) return;
             if (MedMessageInstance._sc != null)
                 MedMessageInstance.Update();
             if (BigMessageInstance._sc != null)

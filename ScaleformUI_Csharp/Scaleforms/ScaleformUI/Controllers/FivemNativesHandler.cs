@@ -13,7 +13,10 @@ namespace ScaleformUI.Scaleforms.ScaleformUI.Controllers
         private GameCursorSprite? _cursorSprite;
 
         public float ScreenWidth => Screen.Width;
+        public float ScreenScaledWidth => Screen.ScaledWidth;
+        public int ScreenResolutionWidth => Screen.Resolution.Width;
         public float ScreenHeight => Screen.Height;
+        public int ScreenResolutionHeight => Screen.Resolution.Height;
 
         public float GameplayCameraRelativeHeading
         {
@@ -30,6 +33,12 @@ namespace ScaleformUI.Scaleforms.ScaleformUI.Controllers
                 _cursorSprite = value;
             }
         }
+
+        public bool IsPaused => Game.IsPaused;
+
+        public Vector3 GameplayCameraPosition => GameplayCamera.Position;
+
+        public float GameplayCameraFieldOfView => GameplayCamera.FieldOfView;
 
         public void ActivateFrontendMenu(uint menuhash, bool togglePause, int component)
         {
@@ -494,11 +503,6 @@ namespace ScaleformUI.Scaleforms.ScaleformUI.Controllers
         public bool IsFrontendReadyForControl()
         {
             return API.IsFrontendReadyForControl();
-        }
-
-        public bool IsGamePaused()
-        {
-            return Game.IsPaused;
         }
 
         public bool IsInputDisabled(int inputGroup)
